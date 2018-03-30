@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>DRULE ADMIN</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css" media="all" />
+    <link rel="stylesheet" href="src/css/app.css" media="all" />
+    <link rel="stylesheet" href="src/css/themes/default.css" media="all" id="skin" kit-skin />
+</head>
+
+<body class="kit-theme">
+<div class="layui-layout layui-layout-admin kit-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">DRULE ADMIN</div>
+        <div class="layui-logo kit-logo-mobile">D</div>
+        <ul class="layui-nav layui-layout-left kit-nav">
+            <li class="layui-nav-item"><a href="javascript:;">控制台</a></li>
+            <!-- <li class="layui-nav-item"><a href="javascript:;">商品管理</a></li>
+             <li class="layui-nav-item"><a href="javascript:;" id="pay"><i class="fa fa-gratipay" aria-hidden="true"></i> 捐赠我</a></li>
+             <li class="layui-nav-item">
+                 <a href="javascript:;">其它系统</a>
+                 <dl class="layui-nav-child">
+                     <dd><a href="javascript:;">邮件管理</a></dd>
+                     <dd><a href="javascript:;">消息管理</a></dd>
+                     <dd><a href="javascript:;">授权管理</a></dd>
+                 </dl>
+             </li>-->
+        </ul>
+        <ul class="layui-nav layui-layout-right kit-nav">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <i class="layui-icon">&#xe63f;</i> 皮肤
+                </a>
+                <dl class="layui-nav-child skin">
+                    <dd><a href="javascript:;" data-skin="default" style="color:#393D49;"><i class="layui-icon">&#xe658;</i> 默认</a></dd>
+                    <dd><a href="javascript:;" data-skin="orange" style="color:#ff6700;"><i class="layui-icon">&#xe658;</i> 橘子橙</a></dd>
+                    <dd><a href="javascript:;" data-skin="green" style="color:#00a65a;"><i class="layui-icon">&#xe658;</i> 原谅绿</a></dd>
+                    <dd><a href="javascript:;" data-skin="pink" style="color:#FA6086;"><i class="layui-icon">&#xe658;</i> 少女粉</a></dd>
+                    <dd><a href="javascript:;" data-skin="blue.1" style="color:#00c0ef;"><i class="layui-icon">&#xe658;</i> 天空蓝</a></dd>
+                    <dd><a href="javascript:;" data-skin="red" style="color:#dd4b39;"><i class="layui-icon">&#xe658;</i> 枫叶红</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://m.zhengjinfan.cn/images/0.jpg" class="layui-nav-img"> Van
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="javascript:;" kit-target data-options="{url:'basic.html',icon:'&#xe658;',title:'基本资料',id:'966'}"><span>基本资料</span></a></dd>
+                    <dd><a href="javascript:;">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="login.html"><i class="fa fa-sign-out" aria-hidden="true"></i> 注销</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black kit-side">
+        <div class="layui-side-scroll">
+            <div class="kit-side-fold"><i class="fa fa-navicon" aria-hidden="true"></i></div>
+            <ul class="layui-nav layui-nav-tree" lay-filter="kitNavbar" kit-navbar></ul>
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+           <!-- <ul class="layui-nav layui-nav-tree" lay-filter="kitNavbar" kit-navbar>
+                &lt;!&ndash; 以下为新增菜单   &ndash;&gt;
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>业务线管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" kit-target data-options="{url:'src/html/business/list.html',icon:'',title:'业务线管理',id:'0'}"><i class="layui-icon">&#xe658;</i><span>业务线管理</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>规则管理</span></a>
+                    <dl class="layui-nav-child">
+                       &lt;!&ndash; <dd><a href="javascript:;" kit-target data-options="{url:'',icon:'',title:'变量管理',id:'1'}"><i class="layui-icon">&#xe658;</i><span> 变量管理</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'rule/constant',icon:'',title:'常量管理',id:'2'}"><i class="layui-icon">&#xe658;</i><span> 常量管理</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'ruleAction/index',icon:'',title:'动作库管理',id:'3'}"><i class="layui-icon">&#xe658;</i><span> 动作库管理</span></a></dd>
+                       &ndash;&gt; <dd>
+                            <a href="javascript:;" kit-target data-options="{url:'rule/entity',icon:'&#xe658;',title:'变量管理',id:'1'}">
+                                <i class="layui-icon">&#xe658;</i><span> 变量管理</span></a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" data-icon="fa-user" data-options="{url:'rule/constant',title:'常量管理',id:'2',icon:'&#xe658;'}" data-title="常量管理" kit-target data-id='2'>
+                                <i class="layui-icon">&#xe658;</i><span> 常量管理</span></a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" data-icon="&#xe614;" data-options="{url:'ruleAction/index',title:'动作管理',id:'3',icon:'&#xe658;'}" data-title="动作管理" kit-target data-id='4'>
+                                <i class="layui-icon">&#xe658;</i><span> 动作管理</span></a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;"  data-options="{url:'rule/decision/version/list',icon:'&#xe658;',title:'策略管理',id:'4'}" data-icon="fa-user" data-title="策略管理" kit-target data-id='3'>
+                                <i class="layui-icon">&#xe658;</i>
+                                <span>策略管理</span>
+                            </a>
+                        </dd>
+
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>模型管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" kit-target data-options="{url:'model/list',icon:'',title:'模型配置',id:'7'}"><i class="layui-icon">&#xe658;</i><span> 模型配置</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>验证中心</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" kit-target data-options="{url:'strategy/index',icon:'',title:'决策验证',id:'26'}"><i class="layui-icon">&#xe658;</i><span> 决策验证</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'ruleBind/index',icon:'',title:'决策变量绑定',id:'8'}"><i class="layui-icon">&#xe658;</i><span> 决策变量绑定</span></a></dd>
+                        &lt;!&ndash;<dd><a href="javascript:;" kit-target data-options="{url:'ruleBind/verification/index',icon:'',title:'策略验证',id:'10'}"><i class="layui-icon">&#xe658;</i><span> 策略验证</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'',icon:'',title:'评分卡验证',id:'11'}"><i class="layui-icon">&#xe658;</i><span> 评分卡验证</span></a></dd>&ndash;&gt;
+                        <dd><a href="javascript:;" kit-target data-options="{url:'model/verfication',icon:'',title:'模型验证',id:'12'}"><i class="layui-icon">&#xe658;</i><span> 模型验证</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'/activiti/ui/model/verfication/result',icon:'',title:'模型验证结果',id:'13'}"><i class="layui-icon">&#xe658;</i><span> 模型验证结果</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>发布管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" kit-target data-options="{url:'src/html/version/list.html',icon:'',title:'模型发布',id:'16'}"><i class="layui-icon">&#xe658;</i><span> 策略版本管理</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'',icon:'',title:'策略发布',id:'17'}"><i class="layui-icon">&#xe658;</i><span> 策略发布</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'model/publish/list',icon:'',title:'模型发布',id:'17'}"><i class="layui-icon">&#xe658;</i><span> 模型发布</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'',icon:'',title:'发布审批',id:'18'}"><i class="layui-icon">&#xe658;</i><span> 发布审批</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>版本管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" kit-target data-options="{url:'src/html/version/list.html',icon:'',title:'策略版本管理',id:'14'}"><i class="layui-icon">&#xe658;</i><span> 策略版本管理</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'',icon:'',title:'模型版本管理',id:'15'}"><i class="layui-icon">&#xe658;</i><span> 模型版本管理</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>风险预警</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" kit-target data-options="{url:'',icon:'',title:'模型调度管理',id:'19'}"><i class="layui-icon">&#xe658;</i><span> 模型调度管理</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'',icon:'',title:'模型调度配置',id:'20'}"><i class="layui-icon">&#xe658;</i><span> 模型调度配置</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                        <a href="javascript:;"><i class="fa fa-plug" aria-hidden="true"></i><span>监控管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" kit-target data-options="{url:'supervision/log/index',icon:'',title:'日志查询',id:'23'}"><i class="layui-icon">&#xe658;</i><span> 日志查询</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'supervision/model/report',icon:'',title:'模型报告',id:'24'}"><i class="layui-icon">&#xe658;</i><span> 模型报告</span></a></dd>
+                        <dd><a href="javascript:;" kit-target data-options="{url:'supervision/rule/report',icon:'',title:'策略报告',id:'25'}"><i class="layui-icon">&#xe658;</i><span> 策略报告</span></a></dd>
+                    </dl>
+                </li>
+            </ul>-->
+        </div>
+    </div>
+    <div class="layui-body" id="container">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;"><i class="layui-icon layui-anim layui-anim-rotate layui-anim-loop">&#xe63e;</i> 请稍等...</div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        2017 &copy;
+        <a href="https://www.tuandai.com/">广东鸿特信息咨询有限公司/</a> MIT license
+    </div>
+</div>
+<!-- <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan id='cnzz_stat_icon_1264021086'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s22.cnzz.com/z_stat.php%3Fid%3D1264021086%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+</script> -->
+<script src="plugins/layui/layui.js"></script>
+<script>
+    var message;
+    layui.config({
+        base: '/activiti/ui/src/js/modules/',
+        version: '1.0.1'
+    }).use(['app', 'message'], function() {
+        var app = layui.app,
+            $ = layui.jquery,
+            layer = layui.layer;
+        //将message设置为全局以便子页面调用
+        message = layui.message;
+        //主入口,初始化菜单 开发模式
+        app.set({
+            type: 'iframe-dev'
+        }).init();
+        $('dl.skin > dd').on('click', function() {
+            var $that = $(this);
+            var skin = $that.children('a').data('skin');
+            switchSkin(skin);
+        });
+        var setSkin = function(value) {
+                layui.data('kit_skin', {
+                    key: 'skin',
+                    value: value
+                });
+            },
+            getSkinName = function() {
+                return layui.data('kit_skin').skin;
+            },
+            switchSkin = function(value) {
+                var _target = $('link[kit-skin]')[0];
+                _target.href = _target.href.substring(0, _target.href.lastIndexOf('/') + 1) + value + _target.href.substring(_target.href.lastIndexOf('.'));
+                setSkin(value);
+            },
+            initSkin = function() {
+                var skin = getSkinName();
+                switchSkin(skin === undefined ? 'default' : skin);
+            }();
+    });
+</script>
+<!--<script>
+
+    var message;
+    layui.config({
+        base: 'src/js/modules/',
+        version: false
+    }).use(['layer', 'ht_cookie'], function () {
+        var layer = layui.layer, cookie = layui.ht_cookie;
+        layui.config({
+            base: 'src/js/modules/',
+            version: false
+        }).use(['app', 'message', 'ht_ajax', 'ht_cookie', 'ht_auth'], function () {
+            var app = layui.app,
+                $ = layui.jquery,
+                cookie = layui.ht_cookie,
+                ht_auth = layui.ht_auth,
+                layer = layui.layer;
+            //将message设置为全局以便子页面调用
+            message = layui.message;
+
+            //主入口
+            app.set({
+                type: 'iframe'
+            }).init();
+            $('dl.skin > dd').on('click', function () {
+                var $that = $(this);
+                var skin = $that.children('a').data('skin');
+                switchSkin(skin);
+            });
+            var setSkin = function (value) {
+                    layui.data('kit_skin', {
+                        key: 'skin',
+                        value: value
+                    });
+                },
+                getSkinName = function () {
+                    return layui.data('kit_skin').skin;
+                },
+                switchSkin = function (value) {
+                    var _target = $('link[kit-skin]')[0];
+                    _target.href = _target.href.substring(0, _target.href.lastIndexOf('/') + 1) + value + _target.href.substring(_target.href.lastIndexOf('.'));
+                    setSkin(value);
+                },
+                initSkin = function () {
+                    var skin = getSkinName();
+                    switchSkin(skin === undefined ? 'default' : skin);
+                }();
+            $("#login_out").on("click", function () {
+                cookie.deleteToken();
+                cookie.deleteRefreshToken();
+                window.location.href = "login.html";
+            });
+            //初始化权限资源
+            //ht_auth.load();
+        });
+    });
+</script>-->
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+Configuration:
+  status: warn
+  Properties: # 定义全局变量
+    Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：
+      #测试：-Dlog.level.console=warn
+      #生产：-Dlog.level.console=warn
+      - name: log.level.console
+        value: INFO
+      - name: log.level.file
+        value: INFO
+      - name: LOG_HOME
+        value: logs
+      - name: PROJECT_NAME
+        value:  risk-activiti
+      - name: CONAOLE_LOG_PATTERN
+        value: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} %style{%X{pid}}{magenta} [%15.15t] %style{%-40.40c{1}}{Cyan} %L : %m%n"
+      - name: FILE_LOG_PATTERN
+        value: "%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %X{pid} [%15.15t] %-40.40c{1} : %m%n"
+  Appenders:
+    Console:  #输出到控制台
+      name: CONSOLE
+      target: SYSTEM_OUT
+#      ThresholdFilter:
+#        level: ${sys:log.level.console} # “sys:”表示：如果VM参数中没指定这个变量值，则使用本文件中定义的缺省全局变量值
+#        onMatch: ACCEPT
+#        onMismatch: DENY
+      PatternLayout:
+        pattern: ${CONAOLE_LOG_PATTERN}
+    RollingFile: # 输出到文件
+      name: ROLLING_FILE
+      fileName: ${LOG_HOME}/${PROJECT_NAME}.log
+      filePattern: ${LOG_HOME}/${PROJECT_NAME}_%d{yyyy-MM-dd}.log
+#      ThresholdFilter:
+#        level: ${sys:log.level.file} # “sys:”表示：如果VM参数中没指定这个变量值，则使用本文件中定义的缺省全局变量值
+#        onMatch: ACCEPT
+#        onMismatch: DENY
+      PatternLayout:
+        pattern: ${FILE_LOG_PATTERN}
+      Policies:
+        TimeBasedTriggeringPolicy:
+          interval: "1"
+          modulate: true
+  Loggers:
+#    AsyncLogger:
+#      name:
+#      level:
+    Root:
+      level: INFO
+      AppenderRef:
+        - ref: CONSOLE
+        - ref: ROLLING_FILE #开发环境无需产生日志文件
+    Logger: # 为com.xjj包配置特殊的Log级别，方便调试
+      - name: com.ht
+        additivity: false
+        level: DEBUG
+        AppenderRef:
+          - ref: CONSOLE
+          - ref: ROLLING_FILE

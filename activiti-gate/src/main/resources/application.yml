@@ -1,0 +1,83 @@
+spring:
+    application:
+        name: activiti-gate
+    thymeleaf:
+        mode: LEGACYHTML5
+        cache: false
+    activemq:
+      broker-url:
+    profiles:
+      active: dev
+    session:
+      timeout: 36000 #一天的有效期
+server:
+    port: 8005 #启动端口，开发期使用
+
+zuul:
+  #prefix: /techouse #为zuul设置一个公共的前缀
+  #ignoredServices: '*'
+  routes:
+    activiti-ui:
+      path: /activiti/ui/** #匹配/techouse/usersystem/** 均路由到cloud-client
+    activiti-service:
+      path: /activiti/service/**
+    activiti-config:
+      path: /activiti/extend/**
+  host:
+    connect-timeout-millis: 6000
+
+hystrix:
+  threadpool:
+    default:
+      coreSize: 2000
+  command:
+    default:
+      execution:
+        isolation:
+          semaphore:
+            maxConcurrentRequests: 1000
+          thread:
+            timeoutInMilliseconds: 60000
+          strategy: THREAD
+      fallback:
+         isolation:
+          semaphore:
+            maxConcurrentRequests: 1000
+
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 6000
+ribbon:
+  ConnectTimeout: 60000
+  ReadTimeout: 60000
+  eureka:
+    enabled: false #配置zuul路由时用将此属性设置为false
+activiti-ui:
+  ribbon:
+    listOfServers: 127.0.0.1:8003 #为cloud-client服务指定一组服务地址，应该是用于负载均衡
+activiti-service:
+  ribbon:
+    listOfServers: 127.0.0.1:8002
+risk-drools:
+  ribbon:
+    listOfServers: 127.0.0.1:30511
+activiti-config:
+  ribbon:
+    listOfServers: 127.0.0.1:30521
+
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:8001/eureka/
+            #defaultZone: http://10.110.1.240:30101/eureka/
+
+
+security:
+    user:
+        name: admin
+        password: admin
+        role: USER

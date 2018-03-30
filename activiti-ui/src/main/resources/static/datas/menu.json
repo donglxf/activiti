@@ -1,0 +1,19 @@
+[
+  {
+    "id": "FK_M03",
+    "icon": "fa fa-sitemap",
+    "spread": true,
+    "title": "模型管理",
+    "url": null,
+    "children": [
+      {
+        "id": "FK_M0301",
+        "icon": "fa fa-user",
+        "spread": true,
+        "title": "模型配置",
+        "url": "modelIndex",
+        "children": []
+      }
+    ]
+  }
+]

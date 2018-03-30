@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: common-activiti
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8001/eureka/

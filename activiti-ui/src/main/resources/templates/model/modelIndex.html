@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>模型管理</title>
+    <link rel="stylesheet" href="/activiti/ui/plugins/layui/css/layui.css" media="all">
+</head>
+<body>
+<div class="demoTable" style="padding:10px 10px 0px 10px">
+    <div class="layui-row">
+        <div class="layui-col-xs12">
+            <div class="layui-col-xs5" style="padding-right: 2px">
+                <fieldset class="layui-elem-field">
+                    <legend>模型定义列表</legend>
+                    <div class="layui-field-box">
+                        <div class="demoTable" style="padding:10px 10px 0px 10px">
+                            <div class="layui-inline">
+                                <input class="layui-input" name="id" id="modelName" autocomplete="off" placeholder="模型名称">
+                            </div>
+                            <button class="layui-btn" data-type="reload" id="model_search">查询</button>
+                            <button class="layui-btn" data-type="getCheckData"  onclick="addModel()">新增</button>
+                        </div>
+                        <table id="model_list" lay-filter="model" lay-data="{id: 'idModel'}"></table>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="layui-col-xs7">
+                <fieldset class="layui-elem-field">
+                    <legend>模型版本（全）</legend>
+                    <div class="layui-field-box">
+                        <div class="demoTable" style="padding:2px">
+                            <div class="layui-inline">
+                                <input class="layui-input" name="id" id="modelVersion" autocomplete="off" placeholder="模型版本">
+                            </div>
+                            <button class="layui-btn" data-type="versionReload" id="version_search">查询</button>
+                        </div>
+                        <table id="version_list" lay-filter="version" lay-data="{id: 'version'}"></table>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/html" id="deployTpl">
+    {{#  if(d.deploymentId != '' && d.deploymentId != null){ }}
+    <span>已部署</span>
+    {{#  } else { }}
+    <span>未部署</span>
+    {{#  } }}
+</script>
+
+
+<script type="text/html" id="approvalTpl">
+    {{#  if(d.isApprove != '' && d.isApprove != null && d.isApprove == '1'){ }}
+    <span>通过</span>
+    {{# } else  if(d.isApprove != '' && d.isApprove != null && d.isApprove == '2' ){ }}
+    <span>不通过</span>
+    {{# } else   if(d.isApprove != '' && d.isApprove != null && d.isApprove == '3'){ }}
+    <span>提交审核</span>
+    {{#  } else { }}
+    <span>待提交</span>
+    {{#  } }}
+</script>
+
+<script type="text/html" id="verfiactionTpl">
+    {{#  if(d.isValidate != '' && d.isValidate != null && d.isValidate == '1'){ }}
+    <span>通过</span>
+    {{# } else  if(d.isValidate != '' && d.isValidate != null && d.isValidate == '2' ){ }}
+    <span>不通过</span>
+    {{#  } else { }}
+    <span>待验证</span>
+    {{#  } }}
+</script>
+
+<script type="text/html" id="versionTpl">
+    {{#  if(d.versionType != '' && d.versionType != null && d.versionType == '1'){ }}
+    <span>正式版</span>
+    {{#  } else { }}
+    <span>测试版</span>
+    {{#  } }}
+</script>
+
+
+
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs" lay-event="deploy">发布测试</a>
+    <a class="layui-btn layui-btn-xs" lay-event="version">查看版本</a>
+</script>
+
+
+
+<script src="/activiti/ui/plugins/layui/layui.js"></script>
+<script src="/activiti/ui/src/js/model/model_config.js"></script>
+<script src="/activiti/ui/src/js/model.js"></script>
+</body>
+</html>
