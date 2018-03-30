@@ -13,6 +13,15 @@ public class ModelParamter implements Serializable {
 	private String processId;
 	private String variableName;
 	private String userId;
+	private String belongSystem;
+
+	public String getBelongSystem() {
+		return belongSystem;
+	}
+
+	public void setBelongSystem(String belongSystem) {
+		this.belongSystem = belongSystem;
+	}
 
 	public String getModelId() {
 		return modelId;

@@ -1,6 +1,8 @@
 package com.example.commonactivity.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.example.commonactivity.common.ModelParamter;
+import com.example.commonactivity.common.RpcDeployResult;
 import com.example.commonactivity.common.result.PageResult;
 import com.example.commonactivity.common.result.Result;
 import com.example.commonactivity.service.ActivitiService;
@@ -51,6 +53,9 @@ public class ActivitiController implements ModelDataJsonConstants {
     private ObjectMapper objectMapper;
     @Resource
     private ActivitiService activitiService;
+
+    @Resource
+    private ModelDeployService modelDeployService;
 
 
 
@@ -117,29 +122,29 @@ public class ActivitiController implements ModelDataJsonConstants {
      * @param paramter
      * @return
      */
-//    @GetMapping(value = "/addModeler")
-//    @ResponseBody
-//    public Result<ModelParamter> addModel(ModelParamter paramter) {
-//        LOGGER.info("addModel paramter:" + JSON.toJSONString(paramter));
-//        Result<ModelParamter> data = null;
-//        try {
-//            paramter.setCategory(paramter.getBusinessId());
-//            String key  = paramter.getKey();
-//            List modelList = repositoryService.createModelQuery().modelKey(key).list();
-//            if(modelList != null && modelList.size() > 0){
-//                data = Result.error(1, "创建模型失败，模型编码已存在！");
-//                return data;
-//            }
-//            String modelId = activitiService.addModel(paramter);
-//            paramter.setModelId(modelId);
-//            data = Result.success(paramter);
-//        } catch (Exception e) {
-//            LOGGER.error("addModel error：", e);
-//            data = Result.error(1, "创建模型失败");
-//        }
-//        LOGGER.info("addModel end !");
-//        return data;
-//    }
+    @GetMapping(value = "/addModeler")
+    @ResponseBody
+    public Result<ModelParamter> addModel(ModelParamter paramter) {
+        LOGGER.info("addModel paramter:" + JSON.toJSONString(paramter));
+        Result<ModelParamter> data = null;
+        try {
+            paramter.setCategory(paramter.getBusinessId());
+            String key  = paramter.getKey();
+            List modelList = repositoryService.createModelQuery().modelKey(key).list();
+            if(modelList != null && modelList.size() > 0){
+                data = Result.error(1, "创建模型失败，模型编码已存在！");
+                return data;
+            }
+            String modelId = activitiService.addModel(paramter);
+            paramter.setModelId(modelId);
+            data = Result.success(paramter);
+        } catch (Exception e) {
+            LOGGER.error("addModel error：", e);
+            data = Result.error(1, "创建模型失败");
+        }
+        LOGGER.info("addModel end !");
+        return data;
+    }
 
     /**
      * 删除流程模型
@@ -170,6 +175,32 @@ public class ActivitiController implements ModelDataJsonConstants {
 //        LOGGER.info("delete model end");
 //        return data;
 //    }
+
+    @RequestMapping("deploy")
+    public Result modelDeploy(ModelParamter paramter){
+        LOGGER.info("模型部署,参数paramter:"+ JSON.toJSONString(paramter));
+        Result<String> data = null;
+        if(paramter == null || StringUtils.isEmpty(paramter.getModelId())){
+            data = Result.error(1,"参数异常！");
+            return data;
+        }
+        Result<RpcDeployResult> result = null;
+        try{
+//            paramter.setUserId(this.getUserId());
+            result = modelDeployService.modelDeploy(paramter);
+        }catch(Exception e){
+            data = Result.error(1,"部署流程异常,错误信息："+e.getMessage());
+            LOGGER.error("部署流程异常!",e);
+            return data;
+        }
+        if(result == null || result.getCode() != 0 || result.getData() == null){
+            data = Result.error(2,"部署流程异常");
+            return data;
+        }
+        data = Result.success(result.getData().getDeploymentId());
+        LOGGER.info("模型部署结束！");
+        return data;
+    }
 
     /**
      * 根据Model部署

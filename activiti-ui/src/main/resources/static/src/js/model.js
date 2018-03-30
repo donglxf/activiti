@@ -123,7 +123,7 @@ layui.use(['table','jquery','myutil'], function(){
             $.ajax({
                 cache : true,
                 type : "GET",
-                url : pathConfig.ruleServicePath+'modelDeploy/deploy?modelId='+modelId,
+                url : pathConfig.activitiServicePath+'modelDeploy/deploy?modelId='+modelId,
                 async : false,
                 timeout: 10000,
                 error : function(request) {
@@ -182,11 +182,11 @@ function addModel(){
         type: 2,
         shade: false,
         title:"新增模型",
-        area: ['800px','400px'],
-        content: pathConfig.activitiUiPath+'model/addView',
+        area: ['800px','450px'],
+        content: pathConfig.activitiUiPath+'/addView',
         zIndex: layer.zIndex, //重点1
         success: function(layero){
-            layer.msg(data.msg);
+            // layer.msg(data.msg);
             layer.setTop(layero); //重点2
         }
     });

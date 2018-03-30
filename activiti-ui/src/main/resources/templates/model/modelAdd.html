@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>模型管理</title>
-    <link rel="stylesheet" href="/rule/ui/plugins/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="/activiti/ui/plugins/layui/css/layui.css" media="all">
 </head>
 <body>
 <div style="margin: 15px;">
@@ -20,6 +20,13 @@
             <label class="layui-form-label">模型名称<span style="color: red">&nbsp;*</span></label>
             <div class="layui-input-block">
                 <input type="text" name="name" lay-verify="required" lay-verify-max="32" autocomplete="off" placeholder="模型名称"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属系统<span style="color: red">&nbsp;*</span></label>
+            <div class="layui-input-block">
+                <input type="text" name="belongSystem" lay-verify="required" lay-verify-max="32" autocomplete="off" placeholder="所属系统"
                        class="layui-input">
             </div>
         </div>
@@ -60,8 +67,9 @@
     layui.use(['form', 'jquery','myutil'], function(){
         var form = layui.form;
         var $ = layui.jquery;
-        var myutil = layui.myutil;
-        myutil.business.init('category',$("#businessDiv"),"category");
+//        var myutil = layui.myutil;
+//        myutil.business.init('category',$("#businessDiv"),"category");
+
         form.on('submit(formDemo)', function(data){
             $.ajax({
                 cache : true,
@@ -79,7 +87,7 @@
                             type: 2,
                             shade: false,
                             title:false,
-                            content: pathConfig.ruleUiPath+'modelDetail?modelId='+data.data.modelId+"&date="+new Date(),
+                            content: pathConfig.activitiUiPath+'modelEdit?modelId='+data.data.modelId+"&date="+new Date(),
                             zIndex: layer.zIndex, //重点1
                             success: function(layero){
                                 layer.setTop(layero); //重点2

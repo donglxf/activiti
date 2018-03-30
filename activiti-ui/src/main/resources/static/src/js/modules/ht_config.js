@@ -19,8 +19,7 @@ layui.define(['config'],function (exports) {
         , refreshTokenUrl: basePath + "uaa/auth/token"
 
         , activitiServicePath:"/activiti/" // 流程引擎配置模块根路径
-        , ruleServicePath:"/rule/service/" // 流程引擎配置模块根路径
-        , droolsSerivePath:"/drools/" // 流程引擎配置模块根路径
+        , ruleServicePath:"/activiti/service/" // 流程引擎配置模块根路径
         ,dev:true
     });
 });
