@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.commonactivity.mapper.ActExcuteTaskMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.commonactivity.entity.ActExcuteTask">
+        <id column="id" property="id" />
+        <result column="batch_id" property="batchId" />
+        <result column="proc_release_id" property="procReleaseId" />
+        <result column="proc_inst_id" property="procInstId" />
+        <result column="status" property="status" />
+        <result column="type" property="type" />
+        <result column="in_paramter" property="inParamter" />
+        <result column="out_paramter" property="outParamter" />
+        <result column="spend_time" property="spendTime" />
+        <result column="remark" property="remark" />
+        <result column="create_time" property="createTime" />
+        <result column="create_user" property="createUser" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id, batch_id AS batchId, proc_release_id AS procReleaseId, proc_inst_id AS procInstId, status AS status, type AS type, in_paramter AS inParamter, out_paramter AS outParamter, spend_time AS spendTime, remark AS remark, create_time AS createTime, create_user AS createUser, update_time AS updateTime
+    </sql>
+
+    <select id="getModelExecInfo" resultType="java.util.Map" parameterType="map">
+        select * from act_proc_release ap  where ap.id=#{procReleaseId}
+    </select>
+
+    <select id="getModelAvgTime" resultType="java.util.Map" parameterType="map">
+        select AVG(spend_time) spendTime,proc_release_id ,count(proc_release_id) excuteTotal  from act_excute_task   where 1=1
+        <if test="startTime !=null and startTime!='' ">
+            and create_time>=#{startTime}
+        </if>
+        <if test="endTime !=null and endTime!='' ">
+            and create_time <![CDATA[ <= ]]> #{endTime}
+        </if>
+        GROUP BY proc_release_id  order by  spendTime desc
+        <if test="getWay != null and  getWay != 0 ">
+            limit 0,#{getWay}
+        </if>
+    </select>
+
+</mapper>

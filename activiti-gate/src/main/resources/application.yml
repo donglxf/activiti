@@ -21,8 +21,6 @@ zuul:
       path: /activiti/ui/** #匹配/techouse/usersystem/** 均路由到cloud-client
     activiti-service:
       path: /activiti/service/**
-    activiti-config:
-      path: /activiti/extend/**
   host:
     connect-timeout-millis: 6000
 
@@ -62,12 +60,7 @@ activiti-ui:
 activiti-service:
   ribbon:
     listOfServers: 127.0.0.1:8002
-risk-drools:
-  ribbon:
-    listOfServers: 127.0.0.1:30511
-activiti-config:
-  ribbon:
-    listOfServers: 127.0.0.1:30521
+
 
 eureka:
     client:

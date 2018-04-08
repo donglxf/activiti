@@ -7,6 +7,7 @@ var preUrl="/activiti/service/";
 var preUrlUi="/activiti/ui/";
 layui.use(['table','jquery','myutil'], function(){
     var table = layui.table;
+    var itemTable = layui.table;
     var $ = layui.jquery;
     //第一个实例
     table.render({
@@ -21,20 +22,21 @@ layui.use(['table','jquery','myutil'], function(){
             ,{fixed: 'right', width:150, align:'center', toolbar: '#barDemo', width: "50%"}
         ]]
     });
-    table.render({
+    itemTable.render({
         elem: '#version_list'
         ,height: 'auto'
-        ,url: pathConfig.activitiConfigPath+'page' //数据接口
+        ,url: pathConfig.activitiServicePath+'page' //数据接口
         ,id: "versionReload"
         ,page: true //开启分页
         ,cols: [[ //表头\
             {field: 'modelCode', title: '模型编码', width:"15%"}
             ,{field: 'versionType', title: '版本类型', width:"15%" ,templet:'#versionTpl'}
             ,{field: 'modelVersion', title: '模型版本', width:"10%"}
-            ,{field: 'isValidate', title: '验证状态', width:"10%" ,templet:'#verfiactionTpl'}
+            // ,{field: 'isValidate', title: '验证状态', width:"10%" ,templet:'#verfiactionTpl'}
             ,{field: 'isApprove', title: '审核状态', width:"10%",templet:'#approvalTpl'}
             ,{field: 'createUser', title: '创建人', width:"20%"}
             ,{field: 'createTime', title: '创建时间', width:"20%" }
+            ,{field: 'start', title: '启动',templet:'#start' }
         ]]
     });
     table.on('tool(model)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
@@ -54,6 +56,15 @@ layui.use(['table','jquery','myutil'], function(){
             queryVersionList(modelId);
         }
     });
+    itemTable.on('tool(version)',function (obj) {
+        var data = obj.data; //获得当前行数据
+        var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+        var modelProcdefId = data.modelProcdefId;
+        var modelVersion = data.modelVersion;
+        if(layEvent === 'startProc'){ // 启动流程
+            startProc(modelProcdefId,modelVersion);
+        }
+    })
     var active = {
         reload: function(){
             var modelName = $('#modelName');
@@ -123,7 +134,7 @@ layui.use(['table','jquery','myutil'], function(){
             $.ajax({
                 cache : true,
                 type : "GET",
-                url : pathConfig.activitiServicePath+'modelDeploy/deploy?modelId='+modelId,
+                url : pathConfig.activitiServicePath+'deploy?modelId='+modelId,
                 async : false,
                 timeout: 10000,
                 error : function(request) {
@@ -135,6 +146,34 @@ layui.use(['table','jquery','myutil'], function(){
                     layer.closeAll('loading');
                     if(data.code == 0){
                         layer.msg("发布成功！");
+                    }else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+        });
+    }
+
+    function startProc(modelProcdefId,modelVersion){
+        layer.confirm('您确定启动流程吗？', function(index){
+            layer.close(index);
+            console.log("modelProcdefId=="+modelProcdefId+">>modelVersion=="+modelVersion);
+            layer.load();
+            $.ajax({
+                cache : true,
+                type : "GET",
+                url : pathConfig.activitiServicePath+'start?procDefId='+modelProcdefId+"&version="+modelVersion,
+                async : false,
+                timeout: 10000,
+                error : function(request) {
+                    layer.msg("启动失败！");
+                    layer.closeAll('loading');
+                },
+                success : function(data) {
+                    console.log(data);
+                    layer.closeAll('loading');
+                    if(data.code == 0){
+                        layer.msg("启动成功！");
                     }else {
                         layer.msg(data.msg);
                     }

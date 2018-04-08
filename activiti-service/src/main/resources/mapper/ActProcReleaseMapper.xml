@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.commonactivity.mapper.ActProcReleaseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.commonactivity.entity.ActProcRelease">
+        <id column="id" property="id" />
+        <result column="model_id" property="modelId" />
+        <result column="model_code" property="modelCode" />
+        <result column="model_procdef_id" property="modelProcdefId" />
+        <result column="model_name" property="modelName" />
+        <result column="model_version" property="modelVersion" />
+        <result column="model_category" property="modelCategory" />
+        <result column="version_type" property="versionType" />
+        <result column="is_validate" property="isValidate" />
+        <result column="is_approve" property="isApprove" />
+        <result column="approve_task_id" property="approveTaskId" />
+        <result column="is_effect" property="isEffect" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="create_time" property="createTime" />
+        <result column="create_user" property="createUser" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS id,model_code as modelCode, model_procdef_id AS modelProcdefId, model_name AS modelName, model_version AS modelVersion, model_category AS modelCategory, version_type AS versionType, is_validate AS isValidate, is_approve AS isApprove,approve_task_id as approveTaskId , is_effect AS isEffect, update_time AS updateTime, update_user AS updateUser, create_time AS createTime, create_user AS createUser
+    </sql>
+    
+    <select id="getModelLastedVersion" parameterType="java.util.Map" resultType="com.example.commonactivity.entity.ActProcRelease">
+        SELECT <include refid="Base_Column_List"></include> from act_proc_release a
+        where a.is_effect = '0' and a.version_type = '1'
+        <if test="modelCode != null and model_code != '' ">
+            and a.model_code= #{modelCode}
+        </if>
+        order by substring(model_version,3)+0 desc
+    </select>
+
+    <select id="findTaskByAssigneeOrGroup" parameterType="com.example.commonactivity.vo.FindTaskBeanVo" resultType="com.example.commonactivity.entity.ActRuTask">
+        SELECT distinct T.* FROM ACT_RU_TASK T LEFT JOIN ACT_RU_IDENTITYLINK I ON T.ID_=I.TASK_ID_ WHERE 1=1
+            <if test="findTaskVo.assignee != null ">
+                and T.ASSIGNEE_=#{findTaskVo.assignee}
+            </if>
+            <if test="findTaskVo.candidateUser != null or findTaskVo.candidateGroup != null ">
+                and ( 1=2
+                <if test="findTaskVo.candidateUser != null">
+                   or I.USER_ID_= #{findTaskVo.candidateUser}
+                </if>
+                <if test="findTaskVo.candidateGroup != null ">
+                    or I.group_id_ = #{findTaskVo.candidateGroup}
+                </if>
+                )
+            </if>
+          AND I.TYPE_='candidate'
+    </select>
+
+</mapper>

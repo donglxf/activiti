@@ -11,7 +11,7 @@ Configuration:
       - name: LOG_HOME
         value: logs
       - name: PROJECT_NAME
-        value:  risk-activiti
+        value:  common-activiti
       - name: CONAOLE_LOG_PATTERN
         value: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} %style{%X{pid}}{magenta} [%15.15t] %style{%-40.40c{1}}{Cyan} %L : %m%n"
       - name: FILE_LOG_PATTERN
@@ -41,6 +41,7 @@ Configuration:
           interval: "1"
           modulate: true
   Loggers:
+
 #    AsyncLogger:
 #      name:
 #      level:
