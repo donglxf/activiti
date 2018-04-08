@@ -1,2 +1,2 @@
 # activiti
-activiti 一些实例，包括设计器集成，流程回退等
+spring cloud + activiti ，集成流程设计器，实现流程回退等等接口，可直接对外提供服务。
