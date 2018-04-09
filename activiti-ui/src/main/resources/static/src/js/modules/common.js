@@ -75,14 +75,14 @@ layui.define(['layer','laytpl','form','ht_ajax','ht_config'], function(exports) 
 
     var myUtil = {
         v: '1.0.3',
-        baseSerive:'/rule/service',
+        baseSerive:'/activiti/service',
         //业务相关
         business:{
             select:{
                 name:'businessId',
                 id:'businessId'
             },
-            init_url:'/rule/service/business/getAll',
+            init_url:'/activiti/service/business/getAll',
             init_html: function () {
                 return     '      <div class="layui-input-inline">\n' +
                     '                    <select name="'+myUtil.business.select.name+'"  lay-filter="business_select" lay-search="" id="'+myUtil.business.select.id+'" lay-verify="required">\n' +

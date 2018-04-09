@@ -33,6 +33,11 @@
         <div class="layui-form-item" >
             <label class="layui-form-label">业务线<span style="color: red">&nbsp;*</span></label>
             <div class="layui-input-block" id="businessDiv">
+                <select id="businessId" name="businessId">
+                    <option>请选择</option>
+                    <option value="1">房贷</option>
+                    <option value="2">车贷</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item layui-form-text">
@@ -67,8 +72,8 @@
     layui.use(['form', 'jquery','myutil'], function(){
         var form = layui.form;
         var $ = layui.jquery;
-//        var myutil = layui.myutil;
-//        myutil.business.init('category',$("#businessDiv"),"category");
+        var myutil = layui.myutil;
+        myutil.business.init('category',$("#businessDiv"),"category");
 
         form.on('submit(formDemo)', function(data){
             $.ajax({

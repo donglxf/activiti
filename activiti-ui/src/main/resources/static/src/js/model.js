@@ -13,13 +13,14 @@ layui.use(['table','jquery','myutil'], function(){
     table.render({
         elem: '#model_list'
         ,height: 'auto'
-        ,url:preUrl+'/list' //数据接口
+        ,url:preUrl+'/list1' //数据接口
         ,id: 'testReload'
         ,page: true //开启分页
         ,cols: [[ //表头\
-             {field: 'modelName', title: '模型名称', width:"25%"}
-            ,{field: 'createDate', title: '创建时间', width:"25%"}
-            ,{fixed: 'right', width:150, align:'center', toolbar: '#barDemo', width: "50%"}
+             {field: 'modelName', title: '模型名称', width:"20%"}
+            ,{field: 'belongSystem', title: '所属系统', width:"20%"}
+            ,{field: 'creTime', title: '创建时间', width:"20%"}
+            ,{fixed: 'right', width:150, align:'center', toolbar: '#barDemo', width: "40%"}
         ]]
     });
     itemTable.render({
@@ -74,7 +75,7 @@ layui.use(['table','jquery','myutil'], function(){
                     curr: 1 //重新从第 1 页开始
                 }
                 ,where: {
-                    "modelName": modelName.val()
+                    "key": modelName.val()
                 }
             });
         },

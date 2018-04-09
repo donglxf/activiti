@@ -52,3 +52,18 @@ create table `act_proc_release` (
   `create_user` varchar(64) character set utf8 collate utf8_bin null default null comment '创建用户',
   primary key (`id`)
 ) engine = innodb character set = utf8 collate utf8_bin;
+
+
+drop table if exists `act_model_definition`;
+create table act_model_definition(
+	id bigint(20) NOT NULL COMMENT '主键',
+	model_id varchar(50) not null comment '模型id',
+	model_code varchar(200) not null comment '模型编码',
+	model_name varchar(200) not null comment '模型名称',
+	belong_system varchar(200) not null comment '所属系统',
+	business_id varchar(200) not null comment '业务线',
+	model_desc varchar(500) comment '模型描述',
+	`status`  varchar(10) comment '状态',
+	cre_user_id varchar(50) comment '创建人id',
+	cre_time datetime not null default now()  comment '创建时间'
+) engine = innodb character set = utf8 collate utf8_bin;

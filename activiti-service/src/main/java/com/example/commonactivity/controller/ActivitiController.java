@@ -1,6 +1,8 @@
 package com.example.commonactivity.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.example.commonactivity.common.ActivitiConstants;
 import com.example.commonactivity.common.ModelParamter;
@@ -8,8 +10,10 @@ import com.example.commonactivity.common.RpcDeployResult;
 import com.example.commonactivity.common.RpcStartParamter;
 import com.example.commonactivity.common.result.PageResult;
 import com.example.commonactivity.common.result.Result;
+import com.example.commonactivity.entity.ActModelDefinition;
 import com.example.commonactivity.entity.ActProcRelease;
 import com.example.commonactivity.entity.ActRuTask;
+import com.example.commonactivity.service.ActModelDefinitionService;
 import com.example.commonactivity.service.ActProcReleaseService;
 import com.example.commonactivity.service.ActivitiService;
 import com.example.commonactivity.service.ProcessGoBack;
@@ -25,6 +29,7 @@ import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.Model;
 import org.activiti.engine.task.Task;
+import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -65,6 +70,9 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private ActModelDefinitionService  modelDefinitionService;
 
     @Autowired
     private ProcessGoBack processGoBack;
@@ -170,6 +178,14 @@ public class ActivitiController implements ModelDataJsonConstants {
             }
             String modelId = activitiService.addModel(paramter);
             paramter.setModelId(modelId);
+            ActModelDefinition t =new ActModelDefinition();
+            t.setBelongSystem(paramter.getBelongSystem());
+            t.setBusinessId(paramter.getBusinessId());
+            t.setModelId(modelId);
+            t.setModelCode(paramter.getKey());
+            t.setModelName(paramter.getName());
+            t.setModelDesc(paramter.getDescription());
+            modelDefinitionService .insert(t);
             data = Result.success(paramter);
         } catch (Exception e) {
             LOGGER.error("addModel error：", e);
@@ -208,34 +224,6 @@ public class ActivitiController implements ModelDataJsonConstants {
         LOGGER.info("delete model end");
         return data;
     }
-
-    /**
-     * 模型部署
-     * @param paramter
-     * @return
-     */
-//    @RequestMapping("/deploy")
-//    public Result<RpcDeployResult> deploy(@RequestBody ModelParamter paramter){
-//        LOGGER.info("模型部署,参数paramter:"+ JSON.toJSONString(paramter));
-//        Result<RpcDeployResult> data = null;
-//        if(paramter == null || StringUtils.isEmpty(paramter.getModelId())){
-//            data = Result.error(1,"参数异常！");
-//            return data;
-//        }
-//        try{
-//            data = actProcReleaseService.proceDeploy(paramter,paramter.getUserId());
-//        }catch(Exception e){
-//            data = Result.error(1,"部署流程异常,错误信息："+e.getMessage());
-//            LOGGER.error("部署流程异常!",e);
-//            return data;
-//        }
-//        if(data == null || data.getCode() != 0){
-//            data = Result.error(2,"部署流程异常...");
-//            return data;
-//        }
-//        LOGGER.info("模型部署结束！");
-//        return data;
-//    }
 
     /**
      * 根据Model部署
@@ -339,6 +327,27 @@ public class ActivitiController implements ModelDataJsonConstants {
         }
     }
 
+    /**
+     * 查询列表
+     *
+     * @param page
+     * @param actProcRelease
+     * @return
+     */
+    @RequestMapping(value = "/list1")
+    public PageResult<List<ActModelDefinition>> list1(String key , Integer page , Integer limit){
+        Wrapper<ActModelDefinition> wrapper = new EntityWrapper<>();
+        if(org.apache.commons.lang.StringUtils.isNotBlank(key)){
+            wrapper.like("model_name",key);
+        }
+        wrapper.orderBy("cre_time",false);
+        Page<ActModelDefinition> pages = new Page<>();
+        pages.setCurrent(page);
+        pages.setSize(limit);
+        pages = modelDefinitionService.selectPage(pages,wrapper);
+        return PageResult.success(pages.getRecords(),pages.getTotal());
+    }
+
     @RequestMapping(value = "/list")
     public PageResult<List<ModelVo>> list(ModelPage modelPage) {
         PageResult<List<ModelVo>> data = null;
@@ -376,76 +385,82 @@ public class ActivitiController implements ModelDataJsonConstants {
         return data;
     }
 
-//    @RequestMapping(value = "/getProcInstVarObj")
-//    public Object getProcInstVarObj(@RequestBody ModelParamter paramter) {
-//        LOGGER.info("getProcInstVarObj start,paramter:" + JSON.toJSONString(paramter));
-//        List<HistoricVariableInstance> instances = activitiService.getProcessVarByDeployIdAndName(paramter.getProcessId(), paramter.getVariableName());
-//        LOGGER.info("getProcInstVarObj end,paramter:" + JSON.toJSONString(instances));
-//        if (instances.size() > 0 && instances.get(0).getValue() != null) {
-//            return instances.get(0).getValue();
-//        }
-//        return null;
-//    }
 
     /**
      * 根据用户、候选人、候选组 查询所有任务
      */
     @RequestMapping("/findTaskByAssignee")
-    public Result<List<Task>> findMyPersonalTask(@RequestBody FindTaskBeanVo vo) {
+    public Result<List<TaskVo>> findMyPersonalTask(@RequestBody FindTaskBeanVo vo) {
+        List<TaskVo> voList=new ArrayList<>();
+        Result<List<TaskVo>> data=null ; // new ArrayList<TaskVo>();
+//        List<ActRuTask> tlist= activitiService.findTaskByAssigneeOrGroup(vo);
+//        List<ActRuTask> list1= new ArrayList<ActRuTask>();
+//        tlist.stream().forEach(p -> {
+//            if(!list1.contains(p)){
+//                list1.add(p);
+//            }
+//        });
+        if((vo.getAssignee() ==null && vo.getCandidateUser() ==null ) && vo.getCandidateGroup() == null ){
+            data = Result.error(1, "参数异常！");
+            return data;
+        }
 
-        List<ActRuTask> tlist= activitiService.findTaskByAssigneeOrGroup(vo);
-        List<ActRuTask> list1= new ArrayList<ActRuTask>();
-        tlist.stream().forEach(p -> {
-            if(!list1.contains(p)){
-                list1.add(p);
-            }
-        });
 
-
-        List<Task> list = getProcessEngine().getTaskService()//与正在执行的任务管理相关的Service
-                .createTaskQuery()//创建任务查询对象
+//        List<Task>
+                TaskQuery list = getProcessEngine().getTaskService()//与正在执行的任务管理相关的Service
+                .createTaskQuery();//创建任务查询对象
                 /**查询条件（where部分）*/
-                .taskAssignee(vo.getAssignee())//指定个人任务查询，指定办理人
-//                .taskCandidateGroupIn(li)
-//                      .taskCandidateUser(vo.getCandidateUser())//组任务的办理人查询  任务表assign_字段需要设置为null才有效
-//                .taskCandidateGroup(vo.getCandidateUser()) // 候选组办理查询
-//                      .processDefinitionId(processDefinitionId)//使用流程定义ID查询
-//                      .processInstanceId(processInstanceId)//使用流程实例ID查询
-//                      .executionId(executionId)//使用执行对象ID查询
+                if(vo.getAssignee()!=null){
+                    list.taskAssignee(vo.getAssignee()); //指定个人任务查询，指定办理人
+                }
+                if(vo.getCandidateUser()!=null ){
+                    list.taskCandidateUser(vo.getCandidateUser());
+                }
+                if(vo.getCandidateGroup()!=null ){
+                    list.taskCandidateGroup(vo.getCandidateGroup());
+                }
                 /**排序*/
-                .orderByTaskCreateTime().asc()//使用创建时间的升序排列
+        List<Task> d =list.orderByTaskCreateTime().asc()//使用创建时间的升序排列
                 /**返回结果集*/
 //                      .singleResult()//返回惟一结果集
 //                      .count()//返回结果集的数量
 //                      .listPage(firstResult, maxResults);//分页查询
                 .list();//返回列表
-        if (list1 != null && list1.size() > 0) {
-            for (ActRuTask task : list1) {
-                System.out.println("任务ID:" + task.getId());
-                System.out.println("任务名称:" + task.getName());
-                System.out.println("任务的创建时间:" + task.getCreateTime());
-                System.out.println("任务的办理人:" + task.getAssignee());
-                System.out.println("流程实例ID：" + task.getProcInstId());
-                System.out.println("执行对象ID:" + task.getExecutionId());
-                System.out.println("流程定义ID:" + task.getProcDefId());
-                System.out.println("########################################################");
+//        if (list1 != null && list1.size() > 0) {
+//            for (ActRuTask task : list1) {
+//                System.out.println("任务ID:" + task.getId());
+//                System.out.println("任务名称:" + task.getName());
+//                System.out.println("任务的创建时间:" + task.getCreateTime());
+//                System.out.println("任务的办理人:" + task.getAssignee());
+//                System.out.println("流程实例ID：" + task.getProcInstId());
+//                System.out.println("执行对象ID:" + task.getExecutionId());
+//                System.out.println("流程定义ID:" + task.getProcDefId());
+//                System.out.println("########################################################");
+//            }
+//
+//        }
+        if (d != null && d.size() > 0) {
+            for (Task task : d) {
+                TaskVo tvo=new TaskVo();
+//                System.out.println("任务ID:" + task.getId());
+//                System.out.println("任务名称:" + task.getName());
+//                System.out.println("任务的创建时间:" + task.getCreateTime());
+//                System.out.println("任务的办理人:" + task.getAssignee());
+//                System.out.println("流程实例ID：" + task.getProcessInstanceId());
+//                System.out.println("执行对象ID:" + task.getExecutionId());
+//                System.out.println("流程定义ID:" + task.getProcessDefinitionId());
+//                System.out.println("########################################################1");
+                tvo.setCreateTime(task.getCreateTime());
+                tvo.setId(task.getId());
+                tvo.setExecutionId(task.getExecutionId());
+                tvo.setName(task.getName());
+                tvo.setProcDefId(task.getProcessDefinitionId());
+                tvo.setProInstId(task.getProcessInstanceId());
+                tvo.setAssign(task.getAssignee());
+                voList.add(tvo);
             }
-
         }
-        if (list != null && list.size() > 0) {
-            for (Task task : list) {
-                System.out.println("任务ID:" + task.getId());
-                System.out.println("任务名称:" + task.getName());
-                System.out.println("任务的创建时间:" + task.getCreateTime());
-                System.out.println("任务的办理人:" + task.getAssignee());
-                System.out.println("流程实例ID：" + task.getProcessInstanceId());
-                System.out.println("执行对象ID:" + task.getExecutionId());
-                System.out.println("流程定义ID:" + task.getProcessDefinitionId());
-                System.out.println("########################################################1");
-            }
-        }
-//        return null;
-        return Result.success(list);
+        return data=Result.success(voList);
     }
 
     /**
@@ -502,7 +517,7 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     /**
      * 查询流程可退回节点
-     * @param procInstanceId  流程实例id 70030
+     * @param procInstanceId  流程实例id ：70030
      */
     @RequestMapping("/processBackHisTask")
     public Result<List<ProcessBackTaskNoteVo>> processHisTask(String procInstanceId) throws Exception {
