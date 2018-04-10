@@ -22,9 +22,11 @@ import io.swagger.annotations.ApiOperation;
 import org.activiti.editor.constants.ModelDataJsonConstants;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.Model;
+import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
 import org.apache.commons.io.IOUtils;
@@ -34,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -500,25 +503,40 @@ public class ActivitiController implements ModelDataJsonConstants {
      * 完成任务
      */
     @RequestMapping("/complateTask")
-    public void completeMyPersonalTask(@RequestBody ComplateTaskVo vo) {
-        String taskId=vo.getTaskId();
-        //完成任务的同时，设置流程变量，让流程变量判断连线该如何执行
-        Map<String, Object> variables = new HashMap<String, Object>();
-        variables.put("flag", "2");
-        ActProcessAuditHis his=new ActProcessAuditHis();
-        Task t = getProcessEngine().getTaskService().createTaskQuery().taskId(taskId).singleResult();
-        his.setAssignee(t.getAssignee());
-        his.setOpinion(vo.getOpinion());
-        his.setProDefineId(t.getProcessDefinitionId());
-        his.setProInstId(t.getProcessInstanceId());
-        his.setStatus("completed");
-        his.setTaskDefineKey(t.getTaskDefinitionKey());
-        auditHisService.insert(his);
+    @ResponseBody
+    public Result<String> completeMyPersonalTask(@RequestBody ComplateTaskVo vo) {
+        String taskId = vo.getTaskId();
+        try {
+            if (StringUtils.isEmpty(taskId)) {
+                return Result.error(1, "参数不合法，taskId不能为空");
+            }
+            Task t = getProcessEngine().getTaskService().createTaskQuery().taskId(taskId).singleResult();
 //        TaskInfo tt=  getProcessEngine().getHistoryService().createHistoricTaskInstanceQuery().taskId(taskId).singleResult();
-        getProcessEngine().getTaskService()  //与正在执行的任务管理相关的Service
-                .complete(taskId, variables);
-        System.out.println("完成任务：任务ID：" + taskId);
+            //完成任务的同时，设置流程变量，让流程变量判断连线该如何执行
+            Map<String, Object> variables = new HashMap<String, Object>();
+            variables.put("flag", "2");
+            TaskService service = getProcessEngine().getTaskService();  //与正在执行的任务管理相关的Service
+            Authentication.setAuthenticatedUserId("cmc"); // 添加批注设置审核人
+            service.addComment(taskId, t.getProcessInstanceId(), vo.getOpinion());
+            service.complete(taskId, variables);
 
+            // 记录审批内容
+            ActProcessAuditHis his = new ActProcessAuditHis();
+            his.setAssignee(t.getAssignee());
+            his.setOpinion(vo.getOpinion());
+            his.setProDefineId(t.getProcessDefinitionId());
+            his.setProInstId(t.getProcessInstanceId());
+            his.setStatus("completed");
+            his.setTaskDefineKey(t.getTaskDefinitionKey());
+            his.setTaskId(t.getId());
+            his.setTaskName(t.getName());
+//            auditHisService.insert(his);
+
+            return Result.success("完成任务：任务ID：" + taskId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.error(1, "完成任务失败" + taskId);
     }
 
     /**
@@ -606,21 +624,31 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     @RequestMapping("/processHis")
     @ResponseBody
-    public void queryHistoricActivitiInstance(String processInstanceId) {
+    public Result<List<ProAutoResult>> queryHistoricActivitiInstance(String processInstanceId) {
+        List<ProAutoResult> result_list=new ArrayList<>();
+        TaskService taskService= getProcessEngine().getTaskService();
         List<HistoricTaskInstance> list = getProcessEngine().getHistoryService()
                 .createHistoricTaskInstanceQuery()
                 .processInstanceId(processInstanceId)
                 .list();
         if (list != null && list.size() > 0) {
             for (HistoricTaskInstance hti : list) {
-                System.out.print("taskId:" + hti.getId() + "，");
-                System.out.print("name:" + hti.getName() + "，");
-                System.out.print("pdId:" + hti.getProcessDefinitionId() + "，");
-                System.out.print("taskId:" + hti.getTaskDefinitionKey() + "，");
-                System.out.print("assignee:" + hti.getAssignee() + "，");
-                System.out.println("====================================");
+                ProAutoResult result=new ProAutoResult();
+                List<Comment> li= taskService.getTaskComments(hti.getId());
+                for(Comment com:li){
+                    result.setComment(com.getFullMessage());
+                    result.setUserName(com.getUserId());
+                }
+                result.setAssignee(hti.getAssignee());
+                result.setTaskName(hti.getName());
+                result.setTaskId(hti.getId());
+                result.setProcessDefinitionId(hti.getProcessDefinitionId());
+                result.setProcessInstanceId(hti.getProcessInstanceId());
+                result.setTaskDefinitionKey(hti.getTaskDefinitionKey());
+                result_list.add(result);
             }
         }
+        return Result.success(result_list);
     }
 
 
