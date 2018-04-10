@@ -516,20 +516,20 @@ public class ActivitiController implements ModelDataJsonConstants {
             Map<String, Object> variables = new HashMap<String, Object>();
             variables.put("flag", "2");
             TaskService service = getProcessEngine().getTaskService();  //与正在执行的任务管理相关的Service
-            Authentication.setAuthenticatedUserId("cmc"); // 添加批注设置审核人
+            Authentication.setAuthenticatedUserId(vo.getUserName()); // 添加批注设置审核人
             service.addComment(taskId, t.getProcessInstanceId(), vo.getOpinion());
             service.complete(taskId, variables);
 
             // 记录审批内容
-            ActProcessAuditHis his = new ActProcessAuditHis();
-            his.setAssignee(t.getAssignee());
-            his.setOpinion(vo.getOpinion());
-            his.setProDefineId(t.getProcessDefinitionId());
-            his.setProInstId(t.getProcessInstanceId());
-            his.setStatus("completed");
-            his.setTaskDefineKey(t.getTaskDefinitionKey());
-            his.setTaskId(t.getId());
-            his.setTaskName(t.getName());
+//            ActProcessAuditHis his = new ActProcessAuditHis();
+//            his.setAssignee(t.getAssignee());
+//            his.setOpinion(vo.getOpinion());
+//            his.setProDefineId(t.getProcessDefinitionId());
+//            his.setProInstId(t.getProcessInstanceId());
+//            his.setStatus("completed");
+//            his.setTaskDefineKey(t.getTaskDefinitionKey());
+//            his.setTaskId(t.getId());
+//            his.setTaskName(t.getName());
 //            auditHisService.insert(his);
 
             return Result.success("完成任务：任务ID：" + taskId);
@@ -622,14 +622,19 @@ public class ActivitiController implements ModelDataJsonConstants {
         return Result.success(newBackList);
     }
 
-    @RequestMapping("/processHis")
+    /**
+     * 查询流程办理过程和审批意见
+     * @param processInstanceId
+     * @return
+     */
+    @RequestMapping("/processHisAutoIdea")
     @ResponseBody
     public Result<List<ProAutoResult>> queryHistoricActivitiInstance(String processInstanceId) {
         List<ProAutoResult> result_list=new ArrayList<>();
         TaskService taskService= getProcessEngine().getTaskService();
         List<HistoricTaskInstance> list = getProcessEngine().getHistoryService()
                 .createHistoricTaskInstanceQuery()
-                .processInstanceId(processInstanceId)
+                .processInstanceId(processInstanceId).orderByTaskCreateTime().asc()
                 .list();
         if (list != null && list.size() > 0) {
             for (HistoricTaskInstance hti : list) {

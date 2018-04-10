@@ -3,6 +3,15 @@ package com.ht.commonactivity.vo;
 public class ComplateTaskVo {
     private String taskId;
     private String opinion;
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public String getTaskId() {
         return taskId;
