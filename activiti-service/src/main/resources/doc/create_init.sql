@@ -70,13 +70,17 @@ create table act_model_definition(
 
 
 
-	drop table if exists `act_process_jump_his`;
-	create table act_process_jump_his(
+	drop table if exists `act_process_audit_his`;
+	create table act_process_audit_his(
 		id bigint(20) NOT NULL COMMENT '主键',
-		model_def_id varchar(50) not null comment '流程定义id',
-		model_proc_id varchar(50) not null comment '实例id',
-		source_task varchar(100) not null comment '跳转原节点',
-		target_task varchar(100) not null  comment '跳转目标节点',
+		task_id varchar(50) not null comment '任务id',
+		task_name varchar(50) not null comment '任务名',
+		pro_inst_id varchar(50) not null comment '流程实例id',
+		pro_define_id varchar(100) not null comment '流程定义id',
+		task_define_key varchar(100) not null  comment '任务定义key',
+		assignee varchar(100) not null  comment '节点审批人',
+		opinion varchar(500) not null  comment '审批意见',
+		status varchar(50) comment '状态，completed-完成',
 		cre_user_id varchar(50) comment '执行人id',
-		cre_time datetime not null default now()  comment '跳转时间'
-	) engine = innodb character set = utf8 collate utf8_bin comment '流程回退历史';
+		cre_time datetime not null default now()  comment '审批时间'
+	) engine = innodb character set = utf8 collate utf8_bin comment '流程审批历史';

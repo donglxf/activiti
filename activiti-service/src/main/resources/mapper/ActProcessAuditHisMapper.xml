@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ht.commonactivity.mapper.ActProcessAuditHisMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ht.commonactivity.entity.ActProcessAuditHis">
+        <result column="id" property="id" />
+        <result column="task_id" property="taskId" />
+        <result column="task_name" property="taskName" />
+        <result column="pro_inst_id" property="proInstId" />
+        <result column="pro_define_id" property="proDefineId" />
+        <result column="task_define_key" property="taskDefineKey" />
+        <result column="assignee" property="assignee" />
+        <result column="opinion" property="opinion" />
+        <result column="status" property="status" />
+        <result column="cre_user_id" property="creUserId" />
+        <result column="cre_time" property="creTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, task_id AS taskId, task_name AS taskName, pro_inst_id AS proInstId, pro_define_id AS proDefineId, task_define_key AS taskDefineKey, assignee, opinion, status, cre_user_id AS creUserId, cre_time AS creTime
+    </sql>
+
+</mapper>
