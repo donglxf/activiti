@@ -382,7 +382,7 @@ public class ProcessGoBackImpl implements ProcessGoBack {
         if (definition == null) {
             throw new RuntimeException("流程定义未找到");
         }
-        // 取得上一步活动
+        // 当前活动节点
         ActivityImpl currActivity = ((ProcessDefinitionImpl) definition)
                 .findActivity(currTask.getTaskDefinitionKey());
         List<ActivityImpl> rtnList = new ArrayList<>();
@@ -404,7 +404,7 @@ public class ProcessGoBackImpl implements ProcessGoBack {
      * @param endActivityId 结束节点的activitiyId
      * @throws Exception
      */
-    public void turnBackNew(String taskId, String msg, String endActivityId,String processInstanceId,String toBackNoteId) throws Exception {
+    public String turnBackNew(String taskId, String msg, String endActivityId,String processInstanceId,String toBackNoteId) throws Exception {
 //        Map<String, Object> variables;
 //        // 取得当前任务
         HistoricTaskInstance currTask = historyService
@@ -446,7 +446,7 @@ public class ProcessGoBackImpl implements ProcessGoBack {
 
 //        turnTransition(taskId, activities.get(0).getId(), null); // 逐步退回
         turnTransition(taskId, toBackNoteId, null); // 退回指定节点
-
+        return currTask.getTaskDefinitionKey() ;
     }
 
     /**

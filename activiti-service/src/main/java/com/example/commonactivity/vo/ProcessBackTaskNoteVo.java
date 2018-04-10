@@ -1,5 +1,7 @@
 package com.example.commonactivity.vo;
 
+import com.example.commonactivity.entity.ActRuTask;
+
 public class ProcessBackTaskNoteVo {
     String id;
     String name;
@@ -18,5 +20,24 @@ public class ProcessBackTaskNoteVo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ProcessBackTaskNoteVo person = (ProcessBackTaskNoteVo) o;
+
+        if (!id.equals(person.id)) return false;
+        return true;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+//        result = 31 * result + name.hashCode();
+        return result;
     }
 }

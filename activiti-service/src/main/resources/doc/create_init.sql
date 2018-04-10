@@ -67,3 +67,16 @@ create table act_model_definition(
 	cre_user_id varchar(50) comment '创建人id',
 	cre_time datetime not null default now()  comment '创建时间'
 ) engine = innodb character set = utf8 collate utf8_bin;
+
+
+
+	drop table if exists `act_process_jump_his`;
+	create table act_process_jump_his(
+		id bigint(20) NOT NULL COMMENT '主键',
+		model_def_id varchar(50) not null comment '流程定义id',
+		model_proc_id varchar(50) not null comment '实例id',
+		source_task varchar(100) not null comment '跳转原节点',
+		target_task varchar(100) not null  comment '跳转目标节点',
+		cre_user_id varchar(50) comment '执行人id',
+		cre_time datetime not null default now()  comment '跳转时间'
+	) engine = innodb character set = utf8 collate utf8_bin comment '流程回退历史';

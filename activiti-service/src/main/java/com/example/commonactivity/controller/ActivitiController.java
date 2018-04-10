@@ -483,6 +483,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/getNextTask")
     public void getNextTaskInfo(String taskId) {
+//        taobaoRpcaobaoRpc.judicialSale("ddd");
         TaskDefinition taskDefinition = activitiService.getNextTaskInfo(taskId);
 
     }
@@ -504,24 +505,46 @@ public class ActivitiController implements ModelDataJsonConstants {
      * @param toBackNoteId  流程退回节点定义id = sid-26585B1A-9680-4331-AD31-7A107BA03AB7
      */
     @RequestMapping("/processGoBack")
-    public void processGoBack(String procInstanceId,String toBackNoteId){
+    @ResponseBody
+    public Result<String> processGoBack(String procInstanceId,String toBackNoteId){
         List<Task> tasks = getProcessEngine().getTaskService().createTaskQuery().processInstanceId(procInstanceId).list();
         for (Task task:tasks){
             try {
-                processGoBack.turnBackNew(task.getId(),"流程回退","",procInstanceId,toBackNoteId);
+                String currentTaskId=processGoBack.turnBackNew(task.getId(),"流程回退","",procInstanceId,toBackNoteId);
+                return Result.success(currentTaskId);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        return null;
+    }
+
+    /**
+     * 流程回退至指定节点后再退回至原节点
+     * @param procInstanceId  流程实例id 70030
+     * @param toBackNoteId  流程退回节点定义id = sid-26585B1A-9680-4331-AD31-7A107BA03AB7
+     */
+    @RequestMapping("/processGoTargetTask")
+    public void processGoTargetTask(String procInstanceId,String toTargetNoteId){
+        processGoBack(procInstanceId,toTargetNoteId);
+//        List<Task> tasks = getProcessEngine().getTaskService().createTaskQuery().processInstanceId(procInstanceId).list();
+//        for (Task task:tasks){
+//            try {
+//                processGoBack.turnBackNew(task.getId(),"流程回退","",procInstanceId,toBackNoteId);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     /**
      * 查询流程可退回节点
      * @param procInstanceId  流程实例id ：70030
      */
-    @RequestMapping("/processBackHisTask")
+    @RequestMapping("/processBackTaskList")
     public Result<List<ProcessBackTaskNoteVo>> processHisTask(String procInstanceId) throws Exception {
         List<ProcessBackTaskNoteVo> backList=new ArrayList<ProcessBackTaskNoteVo>();
+        List<ProcessBackTaskNoteVo> newBackList=new ArrayList<ProcessBackTaskNoteVo>();
         List<Task> tasks = getProcessEngine().getTaskService().createTaskQuery().processInstanceId(procInstanceId).list();
         for (Task task:tasks){
             List<ActivityImpl> list=processGoBack.getactivities(task.getId());
@@ -532,8 +555,16 @@ public class ActivitiController implements ModelDataJsonConstants {
                 backList.add(vo);
             }
         }
-        return Result.success(backList);
+        backList.stream().forEach(back -> {
+            if(!newBackList.contains(back)){
+                newBackList.add(back);
+            }
+        });
+        return Result.success(newBackList);
     }
+
+
+
 
 
 

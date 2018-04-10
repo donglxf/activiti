@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.commonactivity.mapper.ActProcessJumpHisMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.commonactivity.entity.ActProcessJumpHis">
+        <result column="id" property="id" />
+        <result column="model_def_id" property="modelDefId" />
+        <result column="model_proc_id" property="modelProcId" />
+        <result column="source_task" property="sourceTask" />
+        <result column="target_task" property="targetTask" />
+        <result column="cre_user_id" property="creUserId" />
+        <result column="cre_time" property="creTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, model_def_id AS modelDefId, model_proc_id AS modelProcId, source_task AS sourceTask, target_task AS targetTask, cre_user_id AS creUserId, cre_time AS creTime
+    </sql>
+
+</mapper>
