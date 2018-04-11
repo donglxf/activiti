@@ -13,7 +13,7 @@ layui.use(['table','jquery','myutil'], function(){
     table.render({
         elem: '#proc_list'
         ,height: 'auto'
-        ,url:preUrl+'findTaskByAssignee?assignee=user_test5' //数据接口
+        ,url:preUrl+'findTaskByAssignee?assignee=user_test1' //数据接口
         ,id: 'testReload'
         ,page: true //开启分页
         ,cols: [[ //表头\
@@ -114,22 +114,6 @@ layui.use(['table','jquery','myutil'], function(){
                 });
             });
         // })
-        // var layIndex = layer.open({
-        //     type: 2,
-        //     shade: false,
-        //     title:"流程明细",
-        //     anim:5,
-        //     area : [ '700px', '600px' ],
-        //     content: preUrlUi+'/procDetail',
-        //     zIndex: layer.zIndex, //重点1
-        //     success: function(layero, index){
-        //         var body = layer.getChildFrame('body', index);
-        //         var input=body.find("input[type='hidden']");
-        //         input.val(proInstId);
-        //         layer.setTop(layero); //重点2
-        //     }
-        // });
-        // layer.full(layIndex);
     }
 
     function queryVersionList(modelId){

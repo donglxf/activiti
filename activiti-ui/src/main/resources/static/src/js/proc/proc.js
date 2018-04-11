@@ -21,7 +21,7 @@ layui.use(['table','jquery','myutil'], function(){
             ,{field: 'startTime', title: '开始系统'}
             ,{field: 'endTime', title: '结束时间'}
             ,{field: 'isComplate', title: '是否结束',templet:"#start"}
-            ,{fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
+            ,{fixed: 'right', width:250, align:'center', toolbar: '#barDemo'}
         ]]
     });
     table.on('tool(model)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
@@ -32,6 +32,8 @@ layui.use(['table','jquery','myutil'], function(){
         console.log(data);
         if(layEvent === 'view'){ //编辑
             showdetail(proInstId);
+        }else if(layEvent==='viewImg'){
+            window.open("http://localhost:8002/viewProImg?processInstanceId="+proInstId);
         }
     });
 
