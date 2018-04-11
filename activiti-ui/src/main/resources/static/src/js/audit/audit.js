@@ -13,7 +13,7 @@ layui.use(['table','jquery','myutil'], function(){
     table.render({
         elem: '#proc_list'
         ,height: 'auto'
-        ,url:preUrl+'findTaskByAssignee?assignee=user_test1' //数据接口
+        ,url:preUrl+'findTaskByAssignee' //数据接口
         ,id: 'testReload'
         ,page: true //开启分页
         ,cols: [[ //表头\
@@ -52,14 +52,14 @@ layui.use(['table','jquery','myutil'], function(){
 
     active = {
         reload: function(){
-            var modelName = $('#modelId');
+            var modelName = $('#userName');
             console.log(modelName.val());
             table.reload('testReload', {
                 page: {
                     curr: 1 //重新从第 1 页开始
                 }
                 ,where: {
-                    "proId": modelName.val()
+                    "assignee": modelName.val()
                 }
             });
         }

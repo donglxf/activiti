@@ -401,7 +401,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/findTaskByCandidateUser")
     @ResponseBody
-    public Result<List<TaskVo>> findTaskByCandidateUser(@RequestBody FindTaskBeanVo vo) {
+    public Result<List<TaskVo>> findTaskByCandidateUser(FindTaskBeanVo vo) {
         List<TaskVo> voList = new ArrayList<>();
         Result<List<TaskVo>> data = null;
         if (vo.getCandidateUser() == null) {
@@ -430,7 +430,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/findTaskByCandidateGroup")
     @ResponseBody
-    public Result<List<TaskVo>> findTaskByCandidateGroup(@RequestBody FindTaskBeanVo vo) {
+    public Result<List<TaskVo>> findTaskByCandidateGroup(FindTaskBeanVo vo) {
         List<TaskVo> voList = new ArrayList<>();
         Result<List<TaskVo>> data = null;
         if (vo.getCandidateGroup() == null) {
@@ -460,7 +460,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/findTaskByAssignee")
     @ResponseBody
-    public Result<List<TaskVo>> findMyPersonalTask(FindTaskBeanVo vo) {
+    public Result<List<TaskVo>> findMyPersonalTask(FindTaskBeanVo vo,String assignee) {
         List<TaskVo> voList = new ArrayList<>();
         Result<List<TaskVo>> data = null; // new ArrayList<TaskVo>();
 //        List<ActRuTask> tlist= activitiService.findTaskByAssigneeOrGroup(vo);
@@ -470,13 +470,14 @@ public class ActivitiController implements ModelDataJsonConstants {
 //                list1.add(p);
 //            }
 //        });
+
+        vo.setAssignee(StringUtils.isEmpty(vo.getAssignee()) ? assignee: vo.getAssignee());
         if (StringUtils.isEmpty(vo.getAssignee())) {
             data = Result.error(1, "参数异常！");
             return data;
         }
 
 
-//        List<Task>
         TaskQuery list = getProcessEngine().getTaskService()//与正在执行的任务管理相关的Service
                 .createTaskQuery();//创建任务查询对象
         /**查询条件（where部分）*/
@@ -484,12 +485,7 @@ public class ActivitiController implements ModelDataJsonConstants {
             list.taskAssignee(vo.getAssignee()); //指定个人任务查询，指定办理人
         }
         /**排序*/
-        List<Task> d = list.orderByTaskCreateTime().asc()//使用创建时间的升序排列
-                /**返回结果集*/
-//                      .singleResult()//返回惟一结果集
-//                      .count()//返回结果集的数量
-//                      .listPage(firstResult, maxResults);//分页查询
-                .list();//返回列表
+        List<Task> d = list.orderByTaskCreateTime().asc().list();//返回列表
         if (d != null && d.size() > 0) {
             for (Task task : d) {
                 TaskVo tvo = new TaskVo();
@@ -527,20 +523,7 @@ public class ActivitiController implements ModelDataJsonConstants {
             service.addComment(taskId, t.getProcessInstanceId(), vo.getOpinion());
             service.complete(taskId, variables);
 
-            // 记录审批内容
-//            ActProcessAuditHis his = new ActProcessAuditHis();
-//            his.setAssignee(t.getAssignee());
-//            his.setOpinion(vo.getOpinion());
-//            his.setProDefineId(t.getProcessDefinitionId());
-//            his.setProInstId(t.getProcessInstanceId());
-//            his.setStatus("completed");
-//            his.setTaskDefineKey(t.getTaskDefinitionKey());
-//            his.setTaskId(t.getId());
-//            his.setTaskName(t.getName());
-//            auditHisService.insert(his);
-
             return Result.success(0);
-//            return Result.success("完成任务：任务ID：" + taskId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -578,7 +561,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/processGoBack")
     @ResponseBody
-    public Result<String> processGoBack(String procInstanceId, String toBackNoteId) {
+    public Result<String> processGoBack(@RequestParam(value="procInstanceId") String procInstanceId, String toBackNoteId) {
         List<Task> tasks = getProcessEngine().getTaskService().createTaskQuery().processInstanceId(procInstanceId).list();
         for (Task task : tasks) {
             try {
@@ -588,7 +571,7 @@ public class ActivitiController implements ModelDataJsonConstants {
                 e.printStackTrace();
             }
         }
-        return null;
+        return  Result.error(1,"操作失败");
     }
 
     /**
@@ -713,7 +696,6 @@ public class ActivitiController implements ModelDataJsonConstants {
             highLightedActivitis.add(activityId);
         }
         //中文显示的是口口口，设置字体就好了
-//        nerateDiagram(bpmnModel, "png", highLightedActivitis, highLightedFlows, "宋体", "宋体", null, 1.0);
         InputStream imageStream = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis, highLightedFlows, "宋体", "", null, null, 1.0);
 
         //单独返回流程图，不高亮显示

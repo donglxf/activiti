@@ -5,6 +5,7 @@ layui.config({
 });
 var preUrl="/activiti/service/";
 var preUrlUi="/activiti/ui/";
+var proInstIds='';
 layui.use(['table','jquery','myutil'], function(){
     var table = layui.table;
     var itemTable = layui.table;
@@ -33,7 +34,10 @@ layui.use(['table','jquery','myutil'], function(){
         if(layEvent === 'view'){ //编辑
             showdetail(proInstId);
         }else if(layEvent==='viewImg'){
-            window.open("http://localhost:8002/viewProImg?processInstanceId="+proInstId);
+            showProImg(proInstId);
+            // window.location.href="http://localhost:8002/viewProImg?processInstanceId="+proInstId;
+
+            // window.open("http://localhost:8002/viewProImg?processInstanceId="+proInstId);
         }
     });
 
@@ -68,6 +72,25 @@ layui.use(['table','jquery','myutil'], function(){
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
     });
+
+    function showProImg(proInstId){
+        proInstIds=proInstId;
+        var layIndex = layer.open({
+            type: 2,
+            shade: false,
+            title:"流程明细",
+            anim:5,
+            area : [ '1200px', '600px' ],
+            content: preUrlUi+'/showProImg',
+            zIndex: layer.zIndex, //重点1
+            success: function(layero, index){
+                var body = layer.getChildFrame('body', index);
+                var input=body.find("input[type='hidden']");
+                input.val(proInstId);
+                layer.setTop(layero); //重点2
+            }
+        });
+    }
 
 
     function showdetail(proInstId){

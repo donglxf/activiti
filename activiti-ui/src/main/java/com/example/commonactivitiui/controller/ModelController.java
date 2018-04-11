@@ -90,4 +90,13 @@ public class ModelController {
         return "audit/procBack";
     }
 
+    /**
+     * 流程回退
+     * @return
+     */
+    @RequestMapping(value = "/showProImg", method = RequestMethod.GET)
+    public String showProImg() {
+        return "audit/showProImg";
+    }
+
 }
