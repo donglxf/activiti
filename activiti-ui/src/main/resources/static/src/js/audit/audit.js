@@ -29,9 +29,12 @@ layui.use(['table','jquery','myutil'], function(){
         var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
         var tr = obj.tr; //获得当前行 tr 的DOM对象
         var taskId = data.id;
+        var proInstId = data.proInstId;
         console.log(data);
         if(layEvent === 'view'){ //编辑
             showdetail(taskId);
+        }else if(layEvent === 'back'){
+            showProHis(proInstId);
         }
     });
 
@@ -67,6 +70,23 @@ layui.use(['table','jquery','myutil'], function(){
         active[type] ? active[type].call(this) : '';
     });
 
+    function showProHis(proInstId){
+        var layIndex = layer.open({
+                type: 2,
+                shade: false,
+                title:"流程退回",
+                anim:5,
+                area : [ '700px', '600px' ],
+                content: preUrlUi+'/procBack',
+                zIndex: layer.zIndex, //重点1
+                success: function(layero, index){
+                    var body = layer.getChildFrame('body', index);
+                    var input=body.find("input[type='hidden']");
+                    input.val(proInstId);
+                    layer.setTop(layero); //重点2
+                }
+            });
+    }
 
     function showdetail(taskId){
         // $.get(preUrl+"processHisAutoIdea?processInstanceId="+proInstId,function (data) {

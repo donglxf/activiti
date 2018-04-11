@@ -81,4 +81,13 @@ public class ModelController {
         return "audit/procBl";
     }
 
+    /**
+     * 流程回退
+     * @return
+     */
+    @RequestMapping(value = "/procBack", method = RequestMethod.GET)
+    public String procBack() {
+        return "audit/procBack";
+    }
+
 }

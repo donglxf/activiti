@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>流程回退</title>
+    <link rel="stylesheet" href="/activiti/ui/plugins/layui/css/layui.css" media="all">
+</head>
+<body>
+<div style="margin: 15px;">
+    <input id="proInstId" type="hidden"/>
+    <div class="layui-field-box">
+        <table id="proc_detail" lay-filter="model"></table>
+    </div>
+</div>
+<script src="/activiti/ui/plugins/layui/layui.js"></script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="back">回退</a>
+</script>
+<script>
+
+    layui.config({
+        base: '/activiti/ui/src/js/modules/' //假设这是你存放拓展模块的根目录
+    }).extend({ //设定模块别名
+        myutil: 'common' //如果 mymod.js 是在根目录，也可以不用设定别名
+    });
+
+    layui.use(['table','jquery','form'], function(){
+        var table = layui.table;
+        var form = layui.form;
+        var $=layui.jquery;
+        table.render({
+            elem: '#proc_detail'
+            ,url:'/activiti/service/processBackTaskList?processInstanceId='+$("#proInstId").val()
+            ,cellMinWidth: 200 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                {field:'name', width:100, title: '退回节点'}
+                ,{field:'id', width:300, title: '任务id', sort: true}
+                ,{field:'id', title: '操作', toolbar: '#barDemo'}
+            ]]
+        });
+        table.on('tool(model)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+            var taskDefId = data.id;
+
+            $.ajax({
+                cache : true,
+                type : "POST",
+                url : '/activiti/service/processGoBack?procInstanceId='+$("#proInstId").val()+'&toBackNoteId='+taskDefId,
+                async : false,
+                error : function(request) {
+                    alert("Connection error");
+                },
+                success : function(da) {
+                    if (da.code == 0) {
+                        layer.msg('保存数据成功');
+                        active.reload();
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+
+
+        });
+
+
+    });
+
+</script>
+</body>
+</html>
