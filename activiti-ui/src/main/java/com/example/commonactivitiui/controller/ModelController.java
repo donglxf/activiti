@@ -45,7 +45,7 @@ public class ModelController {
     }
 
     /**
-     * 流程过程列表
+     * 流程历史列表
      * @return
      */
     @RequestMapping(value = "/procIndex", method = RequestMethod.GET)
@@ -54,12 +54,31 @@ public class ModelController {
     }
 
     /**
-     * 流程明细
+     * 流程历史明细
      * @return
      */
     @RequestMapping(value = "/procDetail", method = RequestMethod.GET)
     public String procDetail() {
         return "proc/procDetail";
+    }
+
+
+    /**
+     * 流程审批
+     * @return
+     */
+    @RequestMapping(value = "/procAudit", method = RequestMethod.GET)
+    public String procAudit() {
+        return "audit/procAuditList";
+    }
+
+    /**
+     * 流程审批
+     * @return
+     */
+    @RequestMapping(value = "/procBl", method = RequestMethod.GET)
+    public String procBl() {
+        return "audit/procBl";
     }
 
 }

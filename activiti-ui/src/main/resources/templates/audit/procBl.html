@@ -1,0 +1,50 @@
+﻿<ins class="adsbygoogle" style="display:inline-block;" data-ad-client="ca-pub-6111334333458862" data-ad-slot="3820120620"></ins>
+<form class="layui-form" action="">
+    <input type="hidden"   name="taskId" >
+    <input type="hidden"  name="userName" value="dyb">
+    <div class="layui-row layui-col-space12">
+        <div class="layui-form-item" >
+            <label class="layui-form-label">审批意见<span style="color: red;">＊</span></label>
+            <textarea name="opinion"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item" style="display: none;">
+        <div class="layui-input-block">
+            <button class="layui-btn"  lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+
+    layui.use(['jquery','form'], function(){
+        var $=layui.jquery;
+        var form=layui.form;
+        form.on('submit(formDemo)', function(data){
+            $.ajax({
+                cache : true,
+                type : "POST",
+                url : '/activiti/service/complateTask',
+                data : data.field,// 你的formid
+//                data:JSON.stringify(data.field),
+                async : false,
+                error : function(request) {
+                    alert("Connection error");
+                },
+                success : function(da) {
+                    if (da.code == 0) {
+                        layer.msg('保存数据成功');
+                        active.reload();
+                    } else {
+                        layer.msg(data.msg);
+                    }
+                }
+            });
+            return false;
+        });
+
+
+    });
+
+</script>

@@ -18,8 +18,16 @@
         "id": "FK_M0302",
         "icon": "fa fa-user",
         "spread": true,
-        "title": "流程审批",
+        "title": "审批历史",
         "url": "procIndex",
+        "children": []
+      }
+    ,{
+        "id": "FK_M0303",
+        "icon": "fa fa-user",
+        "spread": true,
+        "title": "审批过程",
+        "url": "procAudit",
         "children": []
       }
     ]

@@ -449,7 +449,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/findTaskByAssignee")
     @ResponseBody
-    public Result<List<TaskVo>> findMyPersonalTask(@RequestBody FindTaskBeanVo vo) {
+    public Result<List<TaskVo>> findMyPersonalTask(FindTaskBeanVo vo) {
         List<TaskVo> voList = new ArrayList<>();
         Result<List<TaskVo>> data = null; // new ArrayList<TaskVo>();
 //        List<ActRuTask> tlist= activitiService.findTaskByAssigneeOrGroup(vo);
@@ -459,7 +459,7 @@ public class ActivitiController implements ModelDataJsonConstants {
 //                list1.add(p);
 //            }
 //        });
-        if ((vo.getAssignee() == null && vo.getCandidateUser() == null) && vo.getCandidateGroup() == null) {
+        if (StringUtils.isEmpty(vo.getAssignee())) {
             data = Result.error(1, "参数异常！");
             return data;
         }
@@ -471,12 +471,6 @@ public class ActivitiController implements ModelDataJsonConstants {
         /**查询条件（where部分）*/
         if (vo.getAssignee() != null) {
             list.taskAssignee(vo.getAssignee()); //指定个人任务查询，指定办理人
-        }
-        if (vo.getCandidateUser() != null) {
-            list.taskCandidateUser(vo.getCandidateUser());
-        }
-        if (vo.getCandidateGroup() != null) {
-            list.taskCandidateGroup(vo.getCandidateGroup());
         }
         /**排序*/
         List<Task> d = list.orderByTaskCreateTime().asc()//使用创建时间的升序排列
@@ -506,7 +500,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/complateTask")
     @ResponseBody
-    public Result<String> completeMyPersonalTask(@RequestBody ComplateTaskVo vo) {
+    public Result<Integer> completeMyPersonalTask(ComplateTaskVo vo) {
         String taskId = vo.getTaskId();
         try {
             if (StringUtils.isEmpty(taskId)) {
@@ -534,7 +528,8 @@ public class ActivitiController implements ModelDataJsonConstants {
 //            his.setTaskName(t.getName());
 //            auditHisService.insert(his);
 
-            return Result.success("完成任务：任务ID：" + taskId);
+            return Result.success(0);
+//            return Result.success("完成任务：任务ID：" + taskId);
         } catch (Exception e) {
             e.printStackTrace();
         }
