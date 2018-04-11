@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>模型管理</title>
+    <link rel="stylesheet" href="/activiti/ui/plugins/layui/css/layui.css" media="all">
+</head>
+<body>
+<div style="margin: 15px;">
+    <input id="proInstId" type="hidden"/>
+    <form class="layui-form" action="#" id="add_model_form">
+        <!--<div class="layui-form-item">-->
+            <!--<label class="layui-form-label">任务id<span style="color: red">&nbsp;*</span></label>-->
+            <!--<div class="layui-input-block">-->
+                <!--<input type="text" name="taskId" readonly autocomplete="off" placeholder="模型编码" class="layui-input">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="layui-form-item">-->
+            <!--<label class="layui-form-label">审批节点<span style="color: red">&nbsp;*</span></label>-->
+            <!--<div class="layui-input-block">-->
+                <!--<input type="text" name="taskName" lay-verify="required" lay-verify-max="32" autocomplete="off" placeholder="模型名称"-->
+                       <!--class="layui-input">-->
+            <!--</div>-->
+        <!--</div>-->
+
+    </form>
+    <div class="layui-field-box">
+        <table id="proc_detail" lay-filter="model"></table>
+    </div>
+</div>
+<script src="/activiti/ui/plugins/layui/layui.js"></script>
+<script>
+
+    layui.config({
+        base: '/activiti/ui/src/js/modules/' //假设这是你存放拓展模块的根目录
+    }).extend({ //设定模块别名
+        myutil: 'common' //如果 mymod.js 是在根目录，也可以不用设定别名
+    });
+
+    layui.use(['table','jquery'], function(){
+        var table = layui.table;
+        var $=layui.jquery;
+        table.render({
+            elem: '#proc_detail'
+            ,url:'/activiti/service/processHisAutoIdea?processInstanceId='+$("#proInstId").val()
+            ,cellMinWidth: 100 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                {field:'taskId', width:80, title: '任务id', sort: true}
+                ,{field:'taskName', width:100, title: '审批节点'}
+                ,{field:'assignee', width:100, title: '用户', sort: true}
+                ,{field:'userName', width:100, title: '办理用户'}
+                ,{field:'comment', title: '审批意见', width: '30%', minWidth: 100} //minWidth：局部定义当前单元格的最小宽度，layui 2.2.1 新增
+
+            ]]
+        });
+
+
+    });
+
+</script>
+</body>
+</html>

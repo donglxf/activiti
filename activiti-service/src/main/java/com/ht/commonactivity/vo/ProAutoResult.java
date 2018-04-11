@@ -1,14 +1,14 @@
 package com.ht.commonactivity.vo;
 
 public class ProAutoResult {
-    private String taskId;
-    private String taskName;
-    private String processDefinitionId;
-    private String taskDefinitionKey;
-    private String assignee;
-    private String comment;
-    private String processInstanceId;
-    private String userName;
+    public String taskId;
+    public String taskName;
+    public String processDefinitionId;
+    public String taskDefinitionKey;
+    public String assignee;
+    public String comment;
+    public String processInstanceId;
+    public String userName;
 
     public String getUserName() {
         return userName;

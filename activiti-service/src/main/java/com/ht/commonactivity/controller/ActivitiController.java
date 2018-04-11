@@ -21,11 +21,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.activiti.editor.constants.ModelDataJsonConstants;
 import org.activiti.engine.*;
-import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.*;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.Model;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -624,23 +626,24 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     /**
      * 查询流程办理过程和审批意见
+     *
      * @param processInstanceId
      * @return
      */
     @RequestMapping("/processHisAutoIdea")
     @ResponseBody
     public Result<List<ProAutoResult>> queryHistoricActivitiInstance(String processInstanceId) {
-        List<ProAutoResult> result_list=new ArrayList<>();
-        TaskService taskService= getProcessEngine().getTaskService();
+        List<ProAutoResult> result_list = new ArrayList<>();
+        TaskService taskService = getProcessEngine().getTaskService();
         List<HistoricTaskInstance> list = getProcessEngine().getHistoryService()
                 .createHistoricTaskInstanceQuery()
                 .processInstanceId(processInstanceId).orderByTaskCreateTime().asc()
                 .list();
         if (list != null && list.size() > 0) {
             for (HistoricTaskInstance hti : list) {
-                ProAutoResult result=new ProAutoResult();
-                List<Comment> li= taskService.getTaskComments(hti.getId());
-                for(Comment com:li){
+                ProAutoResult result = new ProAutoResult();
+                List<Comment> li = taskService.getTaskComments(hti.getId());
+                for (Comment com : li) {
                     result.setComment(com.getFullMessage());
                     result.setUserName(com.getUserId());
                 }
@@ -656,5 +659,30 @@ public class ActivitiController implements ModelDataJsonConstants {
         return Result.success(result_list);
     }
 
+    /**
+     * 历史流程列表
+     */
+    @GetMapping("/queryHisProcList")
+    @ResponseBody
+    public Result<List<HisProcListVo>> queryHisProcList(String proId) {
+        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<HisProcListVo> list = new ArrayList<>();
+
+        HistoricProcessInstanceQuery query = getProcessEngine().getHistoryService().createHistoricProcessInstanceQuery();
+        if (!StringUtils.isEmpty(proId)) {
+            query.processInstanceId(proId);
+        }
+        List<HistoricProcessInstance> q = query.orderByProcessInstanceStartTime().asc().list();
+        q.forEach(h -> {
+//            System.out.println(h.getId() + "," + h.getBusinessKey() + "," + h.getProcessDefinitionId() + "," + h.getStartTime() + "," + h.getProcessDefinitionKey());
+            HisProcListVo vo = new HisProcListVo();
+            vo.setProInstId(h.getId());
+            vo.setEndTime(h.getEndTime() != null ? sim.format(h.getEndTime()) : "");
+            vo.setStartTime(sim.format(h.getStartTime()));
+            vo.setIsComplate(h.getEndTime() == null ? "未结束" : "已结束");
+            list.add(vo);
+        });
+        return Result.success(list);
+    }
 
 }

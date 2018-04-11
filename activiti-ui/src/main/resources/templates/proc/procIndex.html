@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>模型管理</title>
+    <link rel="stylesheet" href="/activiti/ui/plugins/layui/css/layui.css" media="all">
+</head>
+<body>
+<div class="demoTable" style="padding:10px 10px 0px 10px">
+    <div class="layui-row layui-col-space12">
+        <div class="layui-col-md2">
+            <input class="layui-input" name="id" id="modelId" autocomplete="off" placeholder="流程id">
+        </div>
+        <div class="layui-col-md1">
+            <button class="layui-btn" data-type="reload" id="model_search" onclick="active.reload();">查询</button>
+        </div>
+    </div>
+    <table id="proc_list" lay-filter="model" lay-data="{id: 'idModel'}"></table>
+</div>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="view">查看明细</a>
+</script>
+
+<script type="text/html" id="start">
+    {{# if(d.endTime != ''){ }}
+        <div>{{d.isComplate}}</div>
+    {{# } else { }}
+         <div style="color:red;">{{d.isComplate}}</div>
+    {{# } }}
+</script>
+
+
+
+<script src="/activiti/ui/plugins/layui/layui.js"></script>
+<script src="/activiti/ui/src/js/proc/proc.js"></script>
+</body>
+</html>

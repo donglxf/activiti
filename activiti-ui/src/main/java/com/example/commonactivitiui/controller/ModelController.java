@@ -36,12 +36,30 @@ public class ModelController {
     }
 
     /**
-     * 模型编辑页面
+     * 模型列表
      * @return
      */
     @RequestMapping(value = "/modelIndex", method = RequestMethod.GET)
     public String modelIndex() {
         return "model/modelIndex";
+    }
+
+    /**
+     * 流程过程列表
+     * @return
+     */
+    @RequestMapping(value = "/procIndex", method = RequestMethod.GET)
+    public String procIndex() {
+        return "proc/procIndex";
+    }
+
+    /**
+     * 流程明细
+     * @return
+     */
+    @RequestMapping(value = "/procDetail", method = RequestMethod.GET)
+    public String procDetail() {
+        return "proc/procDetail";
     }
 
 }
