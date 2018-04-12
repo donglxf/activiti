@@ -1,7 +1,7 @@
-Configuration:
+Configuration:  
   status: warn
   Properties: # 定义全局变量
-    Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：
+    Property: # 缺省配置（用于开发环境）。其他环境需要在VM参数中指定，如下：  
       #测试：-Dlog.level.console=warn
       #生产：-Dlog.level.console=warn
       - name: log.level.console
@@ -11,7 +11,7 @@ Configuration:
       - name: LOG_HOME
         value: logs
       - name: PROJECT_NAME
-        value:  common-activiti
+        value: common-activiti
       - name: CONAOLE_LOG_PATTERN
         value: "%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%5p} %style{%X{pid}}{magenta} [%15.15t] %style{%-40.40c{1}}{Cyan} %L : %m%n"
       - name: FILE_LOG_PATTERN
@@ -41,19 +41,15 @@ Configuration:
           interval: "1"
           modulate: true
   Loggers:
-
-#    AsyncLogger:
-#      name:
-#      level:
-    Root:
-      level: INFO
-      AppenderRef:
+    Root:  
+      level: info  
+      AppenderRef:  
         - ref: CONSOLE
         - ref: ROLLING_FILE #开发环境无需产生日志文件
-    Logger: # 为com.xjj包配置特殊的Log级别，方便调试
-      - name: com.ht
-        additivity: false
-        level: DEBUG
-        AppenderRef:
+    Logger: # 为com.xjj包配置特殊的Log级别，方便调试  
+      - name: com.xjj  
+        additivity: false  
+        level: info
+        AppenderRef:  
           - ref: CONSOLE
           - ref: ROLLING_FILE

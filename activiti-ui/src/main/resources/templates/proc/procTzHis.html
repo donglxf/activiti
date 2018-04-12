@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>模型管理</title>
+    <link rel="stylesheet" href="/activiti/ui/plugins/layui/css/layui.css" media="all">
+</head>
+<body>
+<div style="margin: 15px;">
+    <input id="proInstId" type="hidden"/>
+    <div class="layui-field-box">
+        <table id="proc_his" lay-even lay-filter="model" lay-skin="line"></table>
+    </div>
+</div>
+<script src="/activiti/ui/plugins/layui/layui.js"></script>
+
+<script>
+
+    layui.config({
+        base: '/activiti/ui/src/js/modules/' //假设这是你存放拓展模块的根目录
+    }).extend({ //设定模块别名
+        myutil: 'common' //如果 mymod.js 是在根目录，也可以不用设定别名
+    });
+
+    layui.use(['table','jquery', 'laydate'], function(){
+        var table = layui.table;
+        var $=layui.jquery;
+        var laydata=layui.laydate;
+
+        table.render({
+            elem: '#proc_his'
+            ,url:'/activiti/service/getProTzHis?proInstId='+$("#proInstId").val()
+            ,cellMinWidth: 100 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                {field:'procInstId', width:80, title: '实例id', sort: true}
+                ,{field:'sourceTaskName', width:100, title: '原节点'}
+                ,{field:'targetTaskName', width:100, title: '目标节点', sort: true}
+                ,{field:'creTime', width:100, title: '时间',templet: '#createTime' }
+
+            ]]
+        });
+    });
+
+    Date.prototype.Format = function(fmt) { //author: meizz
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份
+            "d+": this.getDate(),                    //日
+            "h+": this.getHours(),                   //小时
+            "m+": this.getMinutes(),                 //分
+            "s+": this.getSeconds(),                 //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()             //毫秒
+        };
+        if(/(y+)/.test(fmt))
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+        for(var k in o)
+            if(new RegExp("("+ k +")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+        return fmt;
+    }
+
+</script>
+<script type="text/html" id="createTime">
+
+    {{#
+        var date = new Date();
+        date.setTime(d.creTime);
+        return date.Format("yyyy-MM-dd hh:mm:ss");
+    }}
+
+</script>
+</body>
+</html>

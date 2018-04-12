@@ -458,7 +458,7 @@ public class ProcessGoBackImpl implements ProcessGoBack {
         his.setProcDefId(currTask.getProcessDefinitionId());
         his.setProName(instance.getProcessDefinitionName());
         his.setProcInstId(currTask.getProcessInstanceId());
-        his.setSourceTaskId(currTask.getId());
+        his.setSourceTaskId(currTask.getTaskDefinitionKey());
         his.setSourceTaskName(currTask.getName());
         his.setTargetTaskId(toBackNoteId);
         his.setTargetTaskName(targetTask.getName());

@@ -62,6 +62,15 @@ public class ModelController {
         return "proc/procDetail";
     }
 
+    /**
+     * 流程跳转记录
+     * @return
+     */
+    @RequestMapping(value = "/procTzHis", method = RequestMethod.GET)
+    public String procTzHis() {
+        return "proc/procTzHis";
+    }
+
 
     /**
      * 流程审批

@@ -31,10 +31,12 @@ layui.use(['table','jquery','myutil'], function(){
         var tr = obj.tr; //获得当前行 tr 的DOM对象
         var proInstId = data.proInstId;
         console.log(data);
-        if(layEvent === 'view'){ //编辑
+        if(layEvent === 'view'){ //明细
             showdetail(proInstId);
-        }else if(layEvent==='viewImg'){
+        }else if(layEvent==='viewImg'){ // 流程图
             showProImg(proInstId);
+        }else if(layEvent==='hisTz'){ //  跳转记录
+            showTzHis(proInstId);
         }
     });
 
@@ -79,6 +81,24 @@ layui.use(['table','jquery','myutil'], function(){
             anim:5,
             area : [ '1200px', '600px' ],
             content: preUrlUi+'/showProImg',
+            zIndex: layer.zIndex, //重点1
+            success: function(layero, index){
+                var body = layer.getChildFrame('body', index);
+                var input=body.find("input[type='hidden']");
+                input.val(proInstId);
+                layer.setTop(layero); //重点2
+            }
+        });
+    }
+
+    function showTzHis(proInstId){
+        var layIndex = layer.open({
+            type: 2,
+            shade: false,
+            title:"流转记录",
+            anim:5,
+            area : [ '700px', '600px' ],
+            content: preUrlUi+'/procTzHis',
             zIndex: layer.zIndex, //重点1
             success: function(layero, index){
                 var body = layer.getChildFrame('body', index);

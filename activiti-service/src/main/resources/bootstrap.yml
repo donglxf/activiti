@@ -1,8 +1,17 @@
 spring:
   application:
     name: common-activiti
-
+cloud:
+    config:
+      name: common-activiti,base,rabbitmq,mongo,redis
+      discovery:
+        service-id: ussp-config-app
+        enabled: true
+      enabled: true
+    bus:
+      enabled: true
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8001/eureka/
+      defaultZone: http://172.16.200.110:30101/eureka/
+#      defaultZone: http://localhost:8001/eureka/

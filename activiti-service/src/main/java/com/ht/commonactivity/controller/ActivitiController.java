@@ -15,7 +15,9 @@ import com.ht.commonactivity.entity.ActProcRelease;
 import com.ht.commonactivity.entity.ActProcessAuditHis;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.ht.commonactivity.entity.ActProcessJumpHis;
 import com.ht.commonactivity.service.*;
+import com.ht.commonactivity.utils.TestPointCat;
 import com.ht.commonactivity.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -90,6 +92,9 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     @Autowired
     private ActProcessAuditHisService auditHisService;
+
+    @Autowired
+    private ActProcessJumpHisService jumpHisService;
 
     private static volatile ProcessEngine processEngine = null;
 
@@ -766,6 +771,21 @@ public class ActivitiController implements ModelDataJsonConstants {
             }
         }
         return highFlows;
+    }
+
+    @RequestMapping("/getProTzHis")
+    public Result<List<ActProcessJumpHis>>  getProTzHis(String proInstId){
+        Wrapper<ActProcessJumpHis> wrapper=new EntityWrapper<ActProcessJumpHis>();
+        wrapper.eq("proc_inst_id",proInstId);
+        return Result.success(jumpHisService.selectList(wrapper));
+    }
+
+
+
+    @RequestMapping("/testPoint")
+    @TestPointCat(ids="aaa",name={"abc","des"})
+    public void testPoint(){
+        LOGGER.info("+++++++++++++++++++++>>>>");
     }
 
 }
