@@ -91,7 +91,6 @@ public class ActivitiController implements ModelDataJsonConstants {
     @Autowired
     private ActProcessAuditHisService auditHisService;
 
-
     private static volatile ProcessEngine processEngine = null;
 
     private static ProcessEngine getProcessEngine() {
@@ -565,7 +564,8 @@ public class ActivitiController implements ModelDataJsonConstants {
         List<Task> tasks = getProcessEngine().getTaskService().createTaskQuery().processInstanceId(procInstanceId).list();
         for (Task task : tasks) {
             try {
-                String currentTaskId = processGoBack.turnBackNew(task.getId(), "流程回退", "", procInstanceId, toBackNoteId);
+                String currentTaskId = processGoBack.turnBackNew(task.getId(), "流程回退", "", toBackNoteId);
+
                 return Result.success(currentTaskId);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -674,6 +674,12 @@ public class ActivitiController implements ModelDataJsonConstants {
         return Result.success(list);
     }
 
+    /**
+     * 流程图查看
+     * @param processInstanceId
+     * @param response
+     * @throws Exception
+     */
     @GetMapping("/viewProImg")
     public void getInstallImg(String processInstanceId, HttpServletResponse response) throws Exception {
         ProcessEngine processEngine = getProcessEngine();

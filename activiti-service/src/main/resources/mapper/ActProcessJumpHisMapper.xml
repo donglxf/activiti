@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ht.commonactivity.mapper.ActProcessJumpHisMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.ht.commonactivity.entity.ActProcessJumpHis">
+        <result column="id" property="id" />
+        <result column="pro_name" property="proName" />
+        <result column="proc_def_id" property="procDefId" />
+        <result column="proc_inst_id" property="procInstId" />
+        <result column="source_task_id" property="sourceTaskId" />
+        <result column="source_task_name" property="sourceTaskName" />
+        <result column="target_task_id" property="targetTaskId" />
+        <result column="target_task_name" property="targetTaskName" />
+        <result column="cre_user_id" property="creUserId" />
+        <result column="cre_time" property="creTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, pro_name AS proName, proc_def_id AS procDefId, proc_inst_id AS procInstId, source_task_id AS sourceTaskId, source_task_name AS sourceTaskName, target_task_id AS targetTaskId, target_task_name AS targetTaskName, cre_user_id AS creUserId, cre_time AS creTime
+    </sql>
+
+</mapper>

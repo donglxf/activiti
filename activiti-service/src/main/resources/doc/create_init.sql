@@ -16,19 +16,6 @@ create table `act_excute_task` (
   primary key (`id`)
 ) engine = innodb character set = utf8 collate utf8_bin COMMENT '模型版本记录表';
 
-drop table if exists `act_validate_batch`;
-create table `act_validate_batch` (
-  `id` bigint(20) not null comment '主键,批次号',
-  `proc_release_id` varchar(64) character set utf8 collate utf8_bin not null comment '流程部署id，与 act_re_procdef.deployment_id 关联',
-  `batch_size` int(12) not null comment '批次大小',
-  `status` varchar(2) character set utf8 collate utf8_bin not null default '0' comment '批次状态，0-待执行，1-正在执行，2-执行完成，3-执行异常',
-  `complete_count` int(11) null default null comment '已执行次数',
-  `is_effect` varchar(2) character set utf8 collate utf8_bin not null default '0' comment '是否生效：0-有效，1-无效',
-  `create_time` datetime not null comment '创建时间',
-  `create_user` varchar(64) character set utf8 collate utf8_bin null default null comment '创建用户',
-  primary key (`id`)
-) engine = innodb character set = utf8 collate utf8_bin;
-
 drop table if exists `act_proc_release`;
 create table `act_proc_release` (
   `id` bigint(20) not null comment '主键',
@@ -84,3 +71,17 @@ create table act_model_definition(
 		cre_user_id varchar(50) comment '执行人id',
 		cre_time datetime not null default now()  comment '审批时间'
 	) engine = innodb character set = utf8 collate utf8_bin comment '流程审批历史';
+
+
+CREATE TABLE `act_process_jump_his` (
+  `id` bigint(20) NOT NULL COMMENT '主键',
+  `pro_name` varchar(100) COLLATE utf8_bin DEFAULT NULL COMMENT '流程名',
+  `proc_def_id` varchar(50) COLLATE utf8_bin NOT NULL COMMENT '流程定义id',
+  `proc_inst_id` varchar(50) COLLATE utf8_bin NOT NULL COMMENT '实例id',
+  `source_task_id` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '跳转原节点id',
+  `source_task_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '跳转原节点Name',
+  `target_task_id` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '跳转目标节点id',
+  `target_task_name` varchar(100) COLLATE utf8_bin NOT NULL COMMENT '跳转目标节点Name',
+  `cre_user_id` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '执行人id',
+  `cre_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '跳转时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='流程回退历史';

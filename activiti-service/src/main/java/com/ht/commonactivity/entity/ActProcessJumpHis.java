@@ -6,6 +6,7 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableName;
+import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 /**
@@ -14,7 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
  * </p>
  *
  * @author dyb
- * @since 2018-04-10
+ * @since 2018-04-12
  */
 @ApiModel
 @TableName("act_process_jump_his")
@@ -28,29 +29,47 @@ public class ActProcessJumpHis extends Model<ActProcessJumpHis> {
 	@ApiModelProperty(required= true,value = "主键")
 	private Long id;
     /**
+     * 流程名
+     */
+	@TableField("pro_name")
+	@ApiModelProperty(required= true,value = "流程名")
+	private String proName;
+    /**
      * 流程定义id
      */
-	@TableField("model_def_id")
+	@TableField("proc_def_id")
 	@ApiModelProperty(required= true,value = "流程定义id")
-	private String modelDefId;
+	private String procDefId;
     /**
      * 实例id
      */
-	@TableField("model_proc_id")
+	@TableField("proc_inst_id")
 	@ApiModelProperty(required= true,value = "实例id")
-	private String modelProcId;
+	private String procInstId;
     /**
-     * 跳转原节点
+     * 跳转原节点id
      */
-	@TableField("source_task")
-	@ApiModelProperty(required= true,value = "跳转原节点")
-	private String sourceTask;
+	@TableField("source_task_id")
+	@ApiModelProperty(required= true,value = "跳转原节点id")
+	private String sourceTaskId;
     /**
-     * 跳转目标节点
+     * 跳转原节点Name
      */
-	@TableField("target_task")
-	@ApiModelProperty(required= true,value = "跳转目标节点")
-	private String targetTask;
+	@TableField("source_task_name")
+	@ApiModelProperty(required= true,value = "跳转原节点Name")
+	private String sourceTaskName;
+    /**
+     * 跳转目标节点id
+     */
+	@TableField("target_task_id")
+	@ApiModelProperty(required= true,value = "跳转目标节点id")
+	private String targetTaskId;
+    /**
+     * 跳转目标节点Name
+     */
+	@TableField("target_task_name")
+	@ApiModelProperty(required= true,value = "跳转目标节点Name")
+	private String targetTaskName;
     /**
      * 执行人id
      */
@@ -73,36 +92,60 @@ public class ActProcessJumpHis extends Model<ActProcessJumpHis> {
 		this.id = id;
 	}
 
-	public String getModelDefId() {
-		return modelDefId;
+	public String getProName() {
+		return proName;
 	}
 
-	public void setModelDefId(String modelDefId) {
-		this.modelDefId = modelDefId;
+	public void setProName(String proName) {
+		this.proName = proName;
 	}
 
-	public String getModelProcId() {
-		return modelProcId;
+	public String getProcDefId() {
+		return procDefId;
 	}
 
-	public void setModelProcId(String modelProcId) {
-		this.modelProcId = modelProcId;
+	public void setProcDefId(String procDefId) {
+		this.procDefId = procDefId;
 	}
 
-	public String getSourceTask() {
-		return sourceTask;
+	public String getProcInstId() {
+		return procInstId;
 	}
 
-	public void setSourceTask(String sourceTask) {
-		this.sourceTask = sourceTask;
+	public void setProcInstId(String procInstId) {
+		this.procInstId = procInstId;
 	}
 
-	public String getTargetTask() {
-		return targetTask;
+	public String getSourceTaskId() {
+		return sourceTaskId;
 	}
 
-	public void setTargetTask(String targetTask) {
-		this.targetTask = targetTask;
+	public void setSourceTaskId(String sourceTaskId) {
+		this.sourceTaskId = sourceTaskId;
+	}
+
+	public String getSourceTaskName() {
+		return sourceTaskName;
+	}
+
+	public void setSourceTaskName(String sourceTaskName) {
+		this.sourceTaskName = sourceTaskName;
+	}
+
+	public String getTargetTaskId() {
+		return targetTaskId;
+	}
+
+	public void setTargetTaskId(String targetTaskId) {
+		this.targetTaskId = targetTaskId;
+	}
+
+	public String getTargetTaskName() {
+		return targetTaskName;
+	}
+
+	public void setTargetTaskName(String targetTaskName) {
+		this.targetTaskName = targetTaskName;
 	}
 
 	public String getCreUserId() {
@@ -130,10 +173,13 @@ public class ActProcessJumpHis extends Model<ActProcessJumpHis> {
 	public String toString() {
 		return "ActProcessJumpHis{" +
 			"id=" + id +
-			", modelDefId=" + modelDefId +
-			", modelProcId=" + modelProcId +
-			", sourceTask=" + sourceTask +
-			", targetTask=" + targetTask +
+			", proName=" + proName +
+			", procDefId=" + procDefId +
+			", procInstId=" + procInstId +
+			", sourceTaskId=" + sourceTaskId +
+			", sourceTaskName=" + sourceTaskName +
+			", targetTaskId=" + targetTaskId +
+			", targetTaskName=" + targetTaskName +
 			", creUserId=" + creUserId +
 			", creTime=" + creTime +
 			"}";

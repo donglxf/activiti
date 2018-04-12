@@ -1,5 +1,7 @@
 package com.ht.commonactivity.service.impl;
 
+import com.ht.commonactivity.entity.ActProcessJumpHis;
+import com.ht.commonactivity.service.ActProcessJumpHisService;
 import com.ht.commonactivity.service.ProcessGoBack;
 
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ import org.activiti.engine.impl.pvm.process.TransitionImpl;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -44,6 +47,9 @@ public class ProcessGoBackImpl implements ProcessGoBack {
 
     @Resource
     protected HistoryService historyService;
+
+    @Autowired
+    private ActProcessJumpHisService jumpHisService;
 
     /**
      * 根据当前任务ID，查询可以驳回的任务节点
@@ -402,7 +408,7 @@ public class ProcessGoBackImpl implements ProcessGoBack {
      * @param endActivityId 结束节点的activitiyId
      * @throws Exception
      */
-    public String turnBackNew(String taskId, String msg, String endActivityId,String processInstanceId,String toBackNoteId) throws Exception {
+    public String turnBackNew(String taskId, String msg, String endActivityId,String toBackNoteId) throws Exception {
 //        Map<String, Object> variables;
 //        // 取得当前任务
         HistoricTaskInstance currTask = historyService
@@ -413,6 +419,9 @@ public class ProcessGoBackImpl implements ProcessGoBack {
                 .createProcessInstanceQuery()
                 .processInstanceId(currTask.getProcessInstanceId())
                 .singleResult();
+        HistoricTaskInstance targetTask= historyService.createHistoricTaskInstanceQuery().taskDefinitionKey(toBackNoteId).
+                processInstanceId(currTask.getProcessInstanceId()).list().get(0);
+
         if (instance == null) {
             throw new RuntimeException("流程已结束");
         }
@@ -444,6 +453,16 @@ public class ProcessGoBackImpl implements ProcessGoBack {
 
 //        turnTransition(taskId, activities.get(0).getId(), null); // 逐步退回
         turnTransition(taskId, toBackNoteId, null); // 退回指定节点
+        // 流程退回日志
+        ActProcessJumpHis his=new ActProcessJumpHis();
+        his.setProcDefId(currTask.getProcessDefinitionId());
+        his.setProName(instance.getProcessDefinitionName());
+        his.setProcInstId(currTask.getProcessInstanceId());
+        his.setSourceTaskId(currTask.getId());
+        his.setSourceTaskName(currTask.getName());
+        his.setTargetTaskId(toBackNoteId);
+        his.setTargetTaskName(targetTask.getName());
+        jumpHisService.insert(his);
         return currTask.getTaskDefinitionKey() ;
     }
 
@@ -537,6 +556,12 @@ public class ProcessGoBackImpl implements ProcessGoBack {
     }
 
 
+    /**
+     * 暂时作废，不调用
+     * @param param
+     * @param user
+     * @throws Exception
+     */
     public void submitTask(ProjectWorkflowRequest param, User user) throws Exception {
         //  if (true) throw new RuntimeException();
         Task task = taskService.createTaskQuery().taskId(param.getTaskId()).singleResult();// 获取当前任务
@@ -592,7 +617,7 @@ public class ProcessGoBackImpl implements ProcessGoBack {
             }
 
         } else if ("0".equals(param.getFlag())) {// 拒绝 // // TODO: 2017/11/8 0008
-            turnBackNew(param.getTaskId(), param.getMsg(), "sid-404150FC-8E2D-4582-9CFB-BC9FF43F09E1","","");
+            turnBackNew(param.getTaskId(), param.getMsg(), "sid-404150FC-8E2D-4582-9CFB-BC9FF43F09E1","");
         } else if ("2".equals(param.getFlag())) {// 终止流程
 //            endProcess(param.getTaskId(), "sid-404150FC-8E2D-4582-9CFB-BC9FF43F09E1");
             ProcessEngines.getDefaultProcessEngine().getTaskService()//与正在执行的任务管理相关的Service

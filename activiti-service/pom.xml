@@ -64,6 +64,11 @@
 			<artifactId>mybatis-plus</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
 			<groupId>org.activiti</groupId>
 			<artifactId>activiti-spring-boot-starter-basic</artifactId>
 			<version>5.22.0</version>

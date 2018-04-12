@@ -35,9 +35,6 @@ layui.use(['table','jquery','myutil'], function(){
             showdetail(proInstId);
         }else if(layEvent==='viewImg'){
             showProImg(proInstId);
-            // window.location.href="http://localhost:8002/viewProImg?processInstanceId="+proInstId;
-
-            // window.open("http://localhost:8002/viewProImg?processInstanceId="+proInstId);
         }
     });
 
@@ -78,7 +75,7 @@ layui.use(['table','jquery','myutil'], function(){
         var layIndex = layer.open({
             type: 2,
             shade: false,
-            title:"流程明细",
+            title:"流程图",
             anim:5,
             area : [ '1200px', '600px' ],
             content: preUrlUi+'/showProImg',

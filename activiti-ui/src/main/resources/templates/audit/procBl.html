@@ -35,6 +35,8 @@
                 success : function(da) {
                     if (da.code == 0) {
                         layer.msg('保存数据成功');
+                        var index = parent.layer.getFrameIndex(window.name); // 获取窗口索引
+                        layer.close(index);
                         active.reload();
                     } else {
                         layer.msg(data.msg);

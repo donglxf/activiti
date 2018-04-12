@@ -16,7 +16,7 @@ public interface ProcessGoBack  {
      * @return 当前节点定义id：sid-BE4054B0-8AC1-4A9F-985E-D9E4FABD2D17
      * @throws Exception
      */
-    public String turnBackNew(String taskId, String msg, String endActivityId,String processInstanceId,String toBackNoteId ) throws Exception;
+    public String turnBackNew(String taskId, String msg, String endActivityId,String toBackNoteId ) throws Exception;
 
     /**
      * 会签退回

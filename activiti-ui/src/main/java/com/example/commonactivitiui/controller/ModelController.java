@@ -73,7 +73,7 @@ public class ModelController {
     }
 
     /**
-     * 流程审批
+     * 流程办理
      * @return
      */
     @RequestMapping(value = "/procBl", method = RequestMethod.GET)
@@ -91,7 +91,7 @@ public class ModelController {
     }
 
     /**
-     * 流程回退
+     * 显示流程图
      * @return
      */
     @RequestMapping(value = "/showProImg", method = RequestMethod.GET)

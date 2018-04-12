@@ -104,12 +104,13 @@ layui.use(['table','jquery','myutil'], function(){
                     success: function (layero, index) {
                         // setFromValues(layero, result);
                         layero.find(":input[name='taskId']").val(taskId);
+
                         // $("#proInstId").value(proInstId);
                     }
                     ,yes: function (index) {
                         //触发表单的提交事件
                         $('form.layui-form').find('button[lay-filter=formDemo]').click();
-                        //  layer.close(index);
+                         layer.close(index);
                     },
                 });
             });
