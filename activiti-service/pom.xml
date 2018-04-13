@@ -13,6 +13,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+
+		<start-class>com.ht.commonactivity.CommonActivityApplication</start-class>
+		<maven.deploy.skip>true</maven.deploy.skip>
+
 	</properties>
 
 	<dependencies>
@@ -285,7 +289,17 @@
     </dependencies>
 
 	<build>
+		<finalName>common-activiti</finalName>
 		<plugins>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+			</plugin>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

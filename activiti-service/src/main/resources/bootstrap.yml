@@ -13,5 +13,5 @@ cloud:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://172.16.200.110:30101/eureka/
-#      defaultZone: http://localhost:8001/eureka/
+#      defaultZone: http://172.16.200.110:30101/eureka/
+      defaultZone: http://localhost:8001/eureka/
