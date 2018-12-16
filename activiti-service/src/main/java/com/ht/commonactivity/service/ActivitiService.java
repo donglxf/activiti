@@ -41,6 +41,14 @@ public interface ActivitiService {
      */
     public RpcDeployResult deploy(String modelId) throws Exception;
 
+    /**
+     * 流程带规则任务部署
+     * @param modelId
+     * @return
+     * @throws Exception
+     */
+    public RpcDeployResult deployRuleModel(String modelId) throws Exception;
+
 
     /**
      * 流程启动

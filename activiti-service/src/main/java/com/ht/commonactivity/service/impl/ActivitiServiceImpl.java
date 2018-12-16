@@ -13,6 +13,7 @@ import com.ht.commonactivity.vo.FindTaskBeanVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.internal.LinkedTreeMap;
+import com.ht.commonactivity.vo.Leave;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FieldExtension;
@@ -155,6 +156,59 @@ public class ActivitiServiceImpl implements ActivitiService, ModelDataJsonConsta
         return result;
     }
 
+    public RpcDeployResult deployRuleModel(String modelId) throws Exception {
+        Result<RpcDeployResult> data = null;
+//        InputStream bpmnInputStream = this.getClass().getClassLoader()
+//                .getResourceAsStream("drlres/ruleTaskModel.bpmn20.xml");
+//        InputStream droolsInputStream = this.getClass().getClassLoader()
+//                .getResourceAsStream("drlres/new.drl");
+//
+//        Deployment deployment = ProcessEngines.getDefaultProcessEngine().getRepositoryService()
+//                .createDeployment()
+//                .addInputStream("drlres/ruleTaskModel.bpmn20.xml", bpmnInputStream)
+//                .addInputStream("drlres/new.drl", droolsInputStream)
+//                .deploy();
+
+        Model modelData = repositoryService.getModel(modelId);
+        ObjectNode modelNode;
+        modelNode = (ObjectNode) new ObjectMapper().readTree(repositoryService.getModelEditorSource(modelData.getId()));
+        byte[] bpmnBytes = null;
+        BpmnModel model = new BpmnJsonConverter().convertToBpmnModel(modelNode);
+        bpmnBytes = new BpmnXMLConverter().convertToXML(model, "GBK");
+        String processName = modelData.getName() + ".bpmn20.xml";
+        Deployment deployment = repositoryService.createDeployment().name(modelData.getName())
+                .addString(processName, new String(bpmnBytes)).deploy();
+        modelData.setDeploymentId(deployment.getId());
+        repositoryService.saveModel(modelData);
+        ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().deploymentId(deployment.getId()).singleResult();
+        List<RpcSenceInfo> modelSences = new ArrayList<RpcSenceInfo>();
+        RpcDeployResult result = new RpcDeployResult();
+        result.setProcessDefineId(processDefinition.getId());
+        result.setDeploymentId(deployment.getId());
+        result.setSences(getProcScenceList(model));
+        result.setVersion(ActivitiConstants.PROC_VERSION_PREFIX + processDefinition.getVersion());
+
+
+        String prcdefId = result.getProcessDefineId();
+        String modelVersion = result.getVersion();
+        // 往模型版本控制表中插入一条记录
+        Model modelRpc = getModelInfo(modelId);
+        ActProcRelease release = new ActProcRelease();
+        release.setModelCategory(modelRpc.getCategory());
+        release.setModelCode(modelRpc.getKey());
+        release.setModelId(modelData.getId());
+        release.setModelName(modelRpc.getName());
+        release.setModelVersion(modelVersion);
+        release.setModelProcdefId(prcdefId);
+        release.setVersionType("0");
+        release.setCreateTime(new Date(System.currentTimeMillis()));
+//        release.setCreateUser(userId);
+        actProcReleaseMapper.insert(release);
+
+
+        return result;
+    }
+
     /**
      * 启动流程
      * @param paramter
@@ -178,7 +232,7 @@ public class ActivitiServiceImpl implements ActivitiService, ModelDataJsonConsta
         // 模型执行任务流水号
         modelParamter.put(ActivitiConstants.PROC_TASK_ID_VAR_KEY, task.getId());
 
-        modelParamter.put("userID","role_user");
+//        modelParamter.put("userID","role_user");
         ProcessInstance instance = runtimeService.startProcessInstanceById(procDefId, modelParamter);
 
         // 更新模型任务流程实例ID
@@ -190,6 +244,31 @@ public class ActivitiServiceImpl implements ActivitiService, ModelDataJsonConsta
         updateTask(task);
         String nextId=getNextNode(instance.getId());
         LOGGER.error("nextId=="+nextId);
+
+//        RuntimeService runtimeService = ProcessEngines.getDefaultProcessEngine().getRuntimeService();
+//        ProcessInstance pi = runtimeService
+//                .startProcessInstanceByKey("myBusinessRuleProcess");
+//        TaskService taskService = ProcessEngines.getDefaultProcessEngine().getTaskService();
+//        Map<String, Object> vars = new HashMap<String, Object>();
+//        vars.put("leave", new Leave(1, 3));
+        /**
+         * 当前任务
+         */
+//        List<Task> tasks = taskService.createTaskQuery()
+//                .processInstanceId(pi.getId()).list();
+//        for (Task task1 : tasks) {
+//            System.out.println(task1.getId() + " , " + task1.getName());
+//            taskService.complete(task1.getId(), vars);
+//        }
+        /**
+         * 下一步任务
+         */
+//        tasks = taskService.createTaskQuery().processInstanceId(pi.getId())
+//                .list();
+//        for (Task task1 : tasks) {
+//            System.out.println(task1.getId() + " , " + task1.getName());
+//        }
+
         return instance.getId();
     }
 
@@ -433,7 +512,7 @@ public class ActivitiServiceImpl implements ActivitiService, ModelDataJsonConsta
      * 如果下一个节点为排他网关, 获取排他网关Id信息, 根据排他网关Id信息和execution获取流程实例排他网关Id为key的变量值,
      * 根据变量值分别执行排他网关后线路中的el表达式, 并找到el表达式通过的线路后的用户任务
      *
-     * @param ActivityImpl activityImpl     流程节点信息
+     * @param activityImpl activityImpl     流程节点信息
      * @param String       activityId             当前流程节点Id信息
      * @param String       elString               排他网关顺序流线段判断条件
      * @param String       processInstanceId      流程实例Id信息

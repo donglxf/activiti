@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.ht.commonactivity.common.ActivitiConstants;
 import com.ht.commonactivity.common.ModelParamter;
 import com.ht.commonactivity.common.RpcDeployResult;
@@ -21,8 +22,10 @@ import com.ht.commonactivity.utils.TestPointCat;
 import com.ht.commonactivity.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.editor.constants.ModelDataJsonConstants;
+import org.activiti.editor.language.json.converter.BpmnJsonConverter;
 import org.activiti.engine.*;
 import org.activiti.engine.history.*;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
@@ -51,7 +54,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.io.InputStream;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -66,6 +69,9 @@ import java.util.*;
 public class ActivitiController implements ModelDataJsonConstants {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(ActivitiController.class);
+
+    @Resource
+    private FormService formService;
 
     @Resource
     private RepositoryService repositoryService;
@@ -255,7 +261,9 @@ public class ActivitiController implements ModelDataJsonConstants {
                 data = Result.error(1, "deploy model error.");
                 return data;
             }
-            RpcDeployResult result = activitiService.deploy(paramter.getModelId());
+            RpcDeployResult result = activitiService.deployRuleModel(paramter.getModelId());
+//            RpcDeployResult result = activitiService.deploy(paramter.getModelId());
+            System.out.println(JSON.toJSONString(result));
             data = Result.success(result);
         } catch (Exception e) {
             LOGGER.error("deploy model error,error message：", e);
@@ -464,7 +472,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/findTaskByAssignee")
     @ResponseBody
-    public Result<List<TaskVo>> findMyPersonalTask(FindTaskBeanVo vo,String assignee) {
+    public Result<List<TaskVo>> findMyPersonalTask(FindTaskBeanVo vo, String assignee) {
         List<TaskVo> voList = new ArrayList<>();
         Result<List<TaskVo>> data = null; // new ArrayList<TaskVo>();
 //        List<ActRuTask> tlist= activitiService.findTaskByAssigneeOrGroup(vo);
@@ -475,7 +483,7 @@ public class ActivitiController implements ModelDataJsonConstants {
 //            }
 //        });
 
-        vo.setAssignee(StringUtils.isEmpty(vo.getAssignee()) ? assignee: vo.getAssignee());
+        vo.setAssignee(StringUtils.isEmpty(vo.getAssignee()) ? assignee : vo.getAssignee());
         if (StringUtils.isEmpty(vo.getAssignee())) {
             data = Result.error(1, "参数异常！");
             return data;
@@ -565,7 +573,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/processGoBack")
     @ResponseBody
-    public Result<String> processGoBack(@RequestParam(value="procInstanceId") String procInstanceId, String toBackNoteId) {
+    public Result<String> processGoBack(@RequestParam(value = "procInstanceId") String procInstanceId, String toBackNoteId) {
         List<Task> tasks = getProcessEngine().getTaskService().createTaskQuery().processInstanceId(procInstanceId).list();
         for (Task task : tasks) {
             try {
@@ -576,7 +584,7 @@ public class ActivitiController implements ModelDataJsonConstants {
                 e.printStackTrace();
             }
         }
-        return  Result.error(1,"操作失败");
+        return Result.error(1, "操作失败");
     }
 
     /**
@@ -681,6 +689,7 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     /**
      * 流程图查看
+     *
      * @param processInstanceId
      * @param response
      * @throws Exception
@@ -774,17 +783,54 @@ public class ActivitiController implements ModelDataJsonConstants {
     }
 
     @RequestMapping("/getProTzHis")
-    public Result<List<ActProcessJumpHis>>  getProTzHis(String proInstId){
-        Wrapper<ActProcessJumpHis> wrapper=new EntityWrapper<ActProcessJumpHis>();
-        wrapper.eq("proc_inst_id",proInstId);
+    public Result<List<ActProcessJumpHis>> getProTzHis(String proInstId) {
+        Wrapper<ActProcessJumpHis> wrapper = new EntityWrapper<ActProcessJumpHis>();
+        wrapper.eq("proc_inst_id", proInstId);
         return Result.success(jumpHisService.selectList(wrapper));
     }
 
+    /**
+     * 流程导出
+     * @param modelId
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping("/export/{modelId}")
+    public void exportModel(@PathVariable("modelId") String modelId, HttpServletResponse response) throws Exception {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
+        try {
+            Model modelData = repositoryService.getModel(modelId);
+            BpmnJsonConverter jsonConverter = new BpmnJsonConverter();
+            //获取节点信息
+            byte[] arg0 = repositoryService.getModelEditorSource(modelData.getId());
+            JsonNode editorNode = new ObjectMapper().readTree(arg0);
+            //将节点信息转换为xml
+            BpmnModel bpmnModel = jsonConverter.convertToBpmnModel(editorNode);
+            BpmnXMLConverter xmlConverter = new BpmnXMLConverter();
+            byte[] bpmnBytes = xmlConverter.convertToXML(bpmnModel);
 
+            ByteArrayInputStream in = new ByteArrayInputStream(bpmnBytes);
+            IOUtils.copy(in, response.getOutputStream());
+//                String filename = bpmnModel.getMainProcess().getId() + ".bpmn20.xml";
+            String filename = modelData.getName() + ".bpmn20.xml";
+            response.setHeader("Content-Disposition", "attachment; filename=" + java.net.URLEncoder.encode(filename, "UTF-8"));
+            response.flushBuffer();
+        } catch (Exception e){
+            PrintWriter out = null;
+            try {
+                out = response.getWriter();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            out.write("未找到对应数据");
+            e.printStackTrace();
+        }
+    }
 
     @RequestMapping("/testPoint")
-    @TestPointCat(ids="aaa",name={"abc","des"})
-    public void testPoint(){
+    @TestPointCat(ids = "aaa", name = {"abc", "des"})
+    public void testPoint() {
         LOGGER.info("+++++++++++++++++++++>>>>");
     }
 

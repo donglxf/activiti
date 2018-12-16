@@ -40,7 +40,7 @@ layui.use(['table','jquery','myutil'], function(){
             ,{field: 'start', title: '启动',templet:'#start' }
         ]]
     });
-    table.on('tool(model)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+    table.on('tool(model)', function(obj){ //注：tool是工具条事件名，model是table原始容器的属性 lay-filter="对应的值"
         var data = obj.data; //获得当前行数据
         var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
         var tr = obj.tr; //获得当前行 tr 的DOM对象

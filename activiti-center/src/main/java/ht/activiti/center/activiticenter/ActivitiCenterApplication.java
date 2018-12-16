@@ -8,6 +8,11 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 @SpringBootApplication
 public class ActivitiCenterApplication {
 
+//	@Override
+//	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+//		return application.sources(ActivitiCenterApplication.class);
+//	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(ActivitiCenterApplication.class, args);
 		System.err.println("ヾ(◍°∇°◍)ﾉﾞ    ActivitiCenterApplication启动成功      ヾ(◍°∇°◍)ﾉﾞ\n");
