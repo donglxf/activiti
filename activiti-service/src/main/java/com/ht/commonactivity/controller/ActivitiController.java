@@ -28,6 +28,7 @@ import org.activiti.engine.history.*;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -83,6 +84,9 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private RuntimeService runtimeService;
 
     @Autowired
     private ActModelDefinitionService modelDefinitionService;
@@ -464,7 +468,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/findTaskByAssignee")
     @ResponseBody
-    public Result<List<TaskVo>> findMyPersonalTask(FindTaskBeanVo vo,String assignee) {
+    public Result<List<TaskVo>> findMyPersonalTask(FindTaskBeanVo vo, String assignee) {
         List<TaskVo> voList = new ArrayList<>();
         Result<List<TaskVo>> data = null; // new ArrayList<TaskVo>();
 //        List<ActRuTask> tlist= activitiService.findTaskByAssigneeOrGroup(vo);
@@ -475,7 +479,7 @@ public class ActivitiController implements ModelDataJsonConstants {
 //            }
 //        });
 
-        vo.setAssignee(StringUtils.isEmpty(vo.getAssignee()) ? assignee: vo.getAssignee());
+        vo.setAssignee(StringUtils.isEmpty(vo.getAssignee()) ? assignee : vo.getAssignee());
         if (StringUtils.isEmpty(vo.getAssignee())) {
             data = Result.error(1, "参数异常！");
             return data;
@@ -565,7 +569,7 @@ public class ActivitiController implements ModelDataJsonConstants {
      */
     @RequestMapping("/processGoBack")
     @ResponseBody
-    public Result<String> processGoBack(@RequestParam(value="procInstanceId") String procInstanceId, String toBackNoteId) {
+    public Result<String> processGoBack(@RequestParam(value = "procInstanceId") String procInstanceId, String toBackNoteId) {
         List<Task> tasks = getProcessEngine().getTaskService().createTaskQuery().processInstanceId(procInstanceId).list();
         for (Task task : tasks) {
             try {
@@ -576,7 +580,7 @@ public class ActivitiController implements ModelDataJsonConstants {
                 e.printStackTrace();
             }
         }
-        return  Result.error(1,"操作失败");
+        return Result.error(1, "操作失败");
     }
 
     /**
@@ -681,6 +685,7 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     /**
      * 流程图查看
+     *
      * @param processInstanceId
      * @param response
      * @throws Exception
@@ -702,9 +707,23 @@ public class ActivitiController implements ModelDataJsonConstants {
         //高亮线路id集合
         List<String> highLightedFlows = getHighLightedFlows(definitionEntity, highLightedActivitList);
 
+        // 获取流程当前所在节点
+        List<Task> t = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
+        Task task = t.get(0);
+        String excId = task.getExecutionId();
+        // 通过当前节点执行id获取执行实体
+        ExecutionEntity execution = (ExecutionEntity) runtimeService.createExecutionQuery().executionId(excId).singleResult();
+        String activitiId = execution.getActivityId();
+
         for (HistoricActivityInstance tempActivity : highLightedActivitList) {
+            //当id一致时，加入list，并退出，解决流程回退后，高亮节点显示不对问题
             String activityId = tempActivity.getActivityId();
-            highLightedActivitis.add(activityId);
+            if (activitiId.equals(activityId)) {
+                highLightedActivitis.add(activityId);
+                break;
+            } else {
+                highLightedActivitis.add(activityId);
+            }
         }
         //中文显示的是口口口，设置字体就好了
         InputStream imageStream = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis, highLightedFlows, "宋体", "", null, null, 1.0);
@@ -774,17 +793,16 @@ public class ActivitiController implements ModelDataJsonConstants {
     }
 
     @RequestMapping("/getProTzHis")
-    public Result<List<ActProcessJumpHis>>  getProTzHis(String proInstId){
-        Wrapper<ActProcessJumpHis> wrapper=new EntityWrapper<ActProcessJumpHis>();
-        wrapper.eq("proc_inst_id",proInstId);
+    public Result<List<ActProcessJumpHis>> getProTzHis(String proInstId) {
+        Wrapper<ActProcessJumpHis> wrapper = new EntityWrapper<ActProcessJumpHis>();
+        wrapper.eq("proc_inst_id", proInstId);
         return Result.success(jumpHisService.selectList(wrapper));
     }
 
 
-
     @RequestMapping("/testPoint")
-    @TestPointCat(ids="aaa",name={"abc","des"})
-    public void testPoint(){
+    @TestPointCat(ids = "aaa", name = {"abc", "des"})
+    public void testPoint() {
         LOGGER.info("+++++++++++++++++++++>>>>");
     }
 
