@@ -1,9 +1,3 @@
-/*
- * 文件名 PageResult.java
- * 版权 Copyright 2017 团贷网
- * 创建人 谭荣巧
- * 创建时间 2017年11月20日 下午3:40:50
- */
 package com.ht.commonactivity.common.result;
 
 
@@ -12,13 +6,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-/**
- * Rest接口请求结果对象<br>
- *
- * @author 谭荣巧
- * @date 2017年11月20日 下午3:40:50
- * @since cams-common 1.0-SNAPSHOT
- */
 @ApiModel
 public class PageResult<T>  implements Serializable {
     private static final long serialVersionUID = 1L;

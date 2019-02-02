@@ -31,6 +31,7 @@ import org.activiti.engine.history.*;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.impl.context.Context;
 import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
 import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
@@ -89,6 +90,9 @@ public class ActivitiController implements ModelDataJsonConstants {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private RuntimeService runtimeService;
 
     @Autowired
     private ActModelDefinitionService modelDefinitionService;
@@ -261,9 +265,7 @@ public class ActivitiController implements ModelDataJsonConstants {
                 data = Result.error(1, "deploy model error.");
                 return data;
             }
-            RpcDeployResult result = activitiService.deployRuleModel(paramter.getModelId());
-//            RpcDeployResult result = activitiService.deploy(paramter.getModelId());
-            System.out.println(JSON.toJSONString(result));
+            RpcDeployResult result = activitiService.deploy(paramter.getModelId());
             data = Result.success(result);
         } catch (Exception e) {
             LOGGER.error("deploy model error,error message：", e);
@@ -711,9 +713,23 @@ public class ActivitiController implements ModelDataJsonConstants {
         //高亮线路id集合
         List<String> highLightedFlows = getHighLightedFlows(definitionEntity, highLightedActivitList);
 
+        // 获取流程当前所在节点
+        List<Task> t = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
+        Task task = t.get(0);
+        String excId = task.getExecutionId();
+        // 通过当前节点执行id获取执行实体
+        ExecutionEntity execution = (ExecutionEntity) runtimeService.createExecutionQuery().executionId(excId).singleResult();
+        String activitiId = execution.getActivityId();
+
         for (HistoricActivityInstance tempActivity : highLightedActivitList) {
+            //当id一致时，加入list，并退出，解决流程回退后，高亮节点显示不对问题
             String activityId = tempActivity.getActivityId();
-            highLightedActivitis.add(activityId);
+            if (activitiId.equals(activityId)) {
+                highLightedActivitis.add(activityId);
+                break;
+            } else {
+                highLightedActivitis.add(activityId);
+            }
         }
         //中文显示的是口口口，设置字体就好了
         InputStream imageStream = diagramGenerator.generateDiagram(bpmnModel, "png", highLightedActivitis, highLightedFlows, "宋体", "", null, null, 1.0);
@@ -783,9 +799,9 @@ public class ActivitiController implements ModelDataJsonConstants {
     }
 
     @RequestMapping("/getProTzHis")
-    public Result<List<ActProcessJumpHis>> getProTzHis(String proInstId) {
-        Wrapper<ActProcessJumpHis> wrapper = new EntityWrapper<ActProcessJumpHis>();
-        wrapper.eq("proc_inst_id", proInstId);
+    public Result<List<ActProcessJumpHis>>  getProTzHis(String proInstId){
+        Wrapper<ActProcessJumpHis> wrapper=new EntityWrapper<ActProcessJumpHis>();
+        wrapper.eq("proc_inst_id",proInstId);
         return Result.success(jumpHisService.selectList(wrapper));
     }
 
@@ -829,8 +845,8 @@ public class ActivitiController implements ModelDataJsonConstants {
     }
 
     @RequestMapping("/testPoint")
-    @TestPointCat(ids = "aaa", name = {"abc", "des"})
-    public void testPoint() {
+    @TestPointCat(ids="aaa",name={"abc","des"})
+    public void testPoint(){
         LOGGER.info("+++++++++++++++++++++>>>>");
     }
 

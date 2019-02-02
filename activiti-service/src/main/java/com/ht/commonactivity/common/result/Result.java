@@ -1,9 +1,3 @@
-/*
- * 文件名 Result.java
- * 版权 Copyright 2017 团贷网
- * 创建人 谭荣巧
- * 创建时间 2017年11月20日 下午3:40:50 
- */
 package com.ht.commonactivity.common.result;
 
 import io.swagger.annotations.ApiModel;
