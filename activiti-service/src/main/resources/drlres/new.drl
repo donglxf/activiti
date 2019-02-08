@@ -1,0 +1,17 @@
+package com.ht.activiti;
+import com.ht.commonactivity.vo.Leave;
+
+
+rule "leave1"
+	when
+		$u12 : Leave(day < 3 );
+	then
+		$u12.setTotal($u12.getDay() + 2 );
+end
+
+rule "leave2"
+	when
+		$u12 : Leave(day >=3 );
+	then
+		$u12.setTotal($u12.getDay() + 5 );
+end

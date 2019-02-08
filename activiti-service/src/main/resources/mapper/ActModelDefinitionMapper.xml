@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ht.commonactivity.mapper.ActModelDefinitionMapper">
+<mapper namespace="com.dyb.commonactivity.mapper.ActModelDefinitionMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ht.commonactivity.entity.ActModelDefinition">
+    <resultMap id="BaseResultMap" type="com.dyb.commonactivity.entity.ActModelDefinition">
         <result column="id" property="id" />
         <result column="model_id" property="modelId" />
         <result column="model_code" property="modelCode" />

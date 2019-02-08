@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 
-		<start-class>com.ht.commonactivity.CommonActivityApplication</start-class>
+		<start-class>com.dyb.commonactivity.CommonActivityApplication</start-class>
 		<maven.deploy.skip>true</maven.deploy.skip>
 
 	</properties>

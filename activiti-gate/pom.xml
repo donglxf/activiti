@@ -9,7 +9,7 @@
     <artifactId>activiti-gate</artifactId>
     <properties>
 
-        <start-class>com.ht.risk.gate.ActivitiGateBootstrap</start-class>
+        <start-class>com.dyb.risk.gate.ActivitiGateBootstrap</start-class>
     </properties>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-undertow -->

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ht.commonactivity.mapper.ActProcessAuditHisMapper">
+<mapper namespace="com.dyb.commonactivity.mapper.ActProcessAuditHisMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.ht.commonactivity.entity.ActProcessAuditHis">
+    <resultMap id="BaseResultMap" type="com.dyb.commonactivity.entity.ActProcessAuditHis">
         <result column="id" property="id" />
         <result column="task_id" property="taskId" />
         <result column="task_name" property="taskName" />
